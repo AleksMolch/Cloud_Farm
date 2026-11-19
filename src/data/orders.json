@@ -1,0 +1,126 @@
+[
+  {
+    "id": "order_wheat_2",
+    "requires": [{ "id": "wheat", "amount": 2 }],
+    "reward": [{ "id": "coin", "amount": 20 }],
+    "expiresSeconds": 900,
+    "weight": 12
+  },
+  {
+    "id": "order_wheat_5",
+    "requires": [{ "id": "wheat", "amount": 5 }],
+    "reward": [{ "id": "coin", "amount": 45 }],
+    "expiresSeconds": 900,
+    "weight": 8
+  },
+  {
+    "id": "order_carrot_3",
+    "requires": [{ "id": "carrot", "amount": 3 }],
+    "reward": [{ "id": "coin", "amount": 42 }],
+    "expiresSeconds": 900,
+    "weight": 8
+  },
+  {
+    "id": "order_carrot_wheat",
+    "requires": [
+      { "id": "carrot", "amount": 2 },
+      { "id": "wheat", "amount": 3 }
+    ],
+    "reward": [{ "id": "coin", "amount": 60 }],
+    "expiresSeconds": 900,
+    "weight": 6
+  },
+  {
+    "id": "order_egg_2",
+    "requires": [{ "id": "egg", "amount": 2 }],
+    "reward": [
+      { "id": "coin", "amount": 60 },
+      { "id": "crystal", "amount": 1 }
+    ],
+    "expiresSeconds": 900,
+    "weight": 7
+  },
+  {
+    "id": "order_milk_1",
+    "requires": [{ "id": "milk", "amount": 1 }],
+    "reward": [{ "id": "coin", "amount": 60 }],
+    "expiresSeconds": 900,
+    "weight": 7
+  },
+  {
+    "id": "order_strawberry_3",
+    "requires": [{ "id": "strawberry", "amount": 3 }],
+    "reward": [{ "id": "coin", "amount": 110 }],
+    "expiresSeconds": 900,
+    "weight": 7
+  },
+  {
+    "id": "order_wool_1",
+    "requires": [{ "id": "wool", "amount": 1 }],
+    "reward": [
+      { "id": "coin", "amount": 150 },
+      { "id": "crystal", "amount": 1 }
+    ],
+    "expiresSeconds": 900,
+    "weight": 5
+  },
+  {
+    "id": "order_flour_2",
+    "requires": [{ "id": "flour", "amount": 2 }],
+    "reward": [{ "id": "coin", "amount": 180 }],
+    "expiresSeconds": 900,
+    "weight": 6
+  },
+  {
+    "id": "order_cream_1",
+    "requires": [{ "id": "cream", "amount": 1 }],
+    "reward": [
+      { "id": "coin", "amount": 240 },
+      { "id": "crystal", "amount": 1 }
+    ],
+    "expiresSeconds": 900,
+    "weight": 5
+  },
+  {
+    "id": "order_pie_1",
+    "requires": [{ "id": "pie", "amount": 1 }],
+    "reward": [
+      { "id": "coin", "amount": 320 },
+      { "id": "crystal", "amount": 1 }
+    ],
+    "expiresSeconds": 900,
+    "weight": 5
+  },
+  {
+    "id": "order_cloudberry_3",
+    "requires": [{ "id": "cloudberry", "amount": 3 }],
+    "reward": [{ "id": "coin", "amount": 300 }],
+    "expiresSeconds": 900,
+    "weight": 5
+  },
+  {
+    "id": "order_wool_milk",
+    "requires": [
+      { "id": "wool", "amount": 2 },
+      { "id": "milk", "amount": 3 }
+    ],
+    "reward": [{ "id": "coin", "amount": 500 }],
+    "expiresSeconds": 900,
+    "weight": 3
+  },
+  {
+    "id": "order_feast",
+    "requires": [
+      { "id": "pie", "amount": 1 },
+      { "id": "cream", "amount": 1 },
+      { "id": "egg", "amount": 2 }
+    ],
+    "reward": [
+      { "id": "coin", "amount": 800 },
+      { "id": "crystal", "amount": 2 }
+    ],
+    "expiresSeconds": 900,
+    "minOrdersCompleted": 4,
+    "weight": 3
+  }
+]

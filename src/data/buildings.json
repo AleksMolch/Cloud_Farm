@@ -1,0 +1,92 @@
+[
+  {
+    "id": "mill",
+    "kind": "building",
+    "zoneId": "mill",
+    "nameKey": "building.mill",
+    "icon": "building_mill",
+    "position": { "x": 640, "y": 285 },
+    "unlockCost": [{ "id": "coin", "amount": 250 }],
+    "upgrade": {
+      "baseCost": [{ "id": "coin", "amount": 100 }],
+      "growth": 1.5,
+      "maxLevel": 5
+    },
+    "levels": [
+      { "level": 1, "seconds": 12, "yield": 1 },
+      { "level": 2, "seconds": 11, "yield": 1 },
+      { "level": 3, "seconds": 10, "yield": 2 },
+      { "level": 4, "seconds": 9, "yield": 2 },
+      { "level": 5, "seconds": 8, "yield": 3 }
+    ],
+    "recipes": [
+      {
+        "id": "flour",
+        "nameKey": "recipe.flour",
+        "input": [{ "id": "wheat", "amount": 2 }],
+        "output": [{ "id": "flour", "amount": 1 }]
+      }
+    ]
+  },
+  {
+    "id": "bakery",
+    "kind": "building",
+    "zoneId": "mill",
+    "nameKey": "building.bakery",
+    "icon": "building_bakery",
+    "position": { "x": 485, "y": 535 },
+    "unlockCost": [{ "id": "coin", "amount": 600 }],
+    "upgrade": {
+      "baseCost": [{ "id": "coin", "amount": 150 }],
+      "growth": 1.5,
+      "maxLevel": 5
+    },
+    "levels": [
+      { "level": 1, "seconds": 25, "yield": 1 },
+      { "level": 2, "seconds": 23, "yield": 1 },
+      { "level": 3, "seconds": 21, "yield": 1 },
+      { "level": 4, "seconds": 19, "yield": 2 },
+      { "level": 5, "seconds": 17, "yield": 2 }
+    ],
+    "recipes": [
+      {
+        "id": "pie",
+        "nameKey": "recipe.pie",
+        "input": [
+          { "id": "flour", "amount": 1 },
+          { "id": "egg", "amount": 1 }
+        ],
+        "output": [{ "id": "pie", "amount": 1 }]
+      }
+    ]
+  },
+  {
+    "id": "dairy",
+    "kind": "building",
+    "zoneId": "mill",
+    "nameKey": "building.dairy",
+    "icon": "building_dairy",
+    "position": { "x": 760, "y": 545 },
+    "unlockCost": [{ "id": "coin", "amount": 1200 }],
+    "upgrade": {
+      "baseCost": [{ "id": "coin", "amount": 180 }],
+      "growth": 1.5,
+      "maxLevel": 5
+    },
+    "levels": [
+      { "level": 1, "seconds": 20, "yield": 1 },
+      { "level": 2, "seconds": 18, "yield": 1 },
+      { "level": 3, "seconds": 16, "yield": 2 },
+      { "level": 4, "seconds": 14, "yield": 2 },
+      { "level": 5, "seconds": 12, "yield": 3 }
+    ],
+    "recipes": [
+      {
+        "id": "cream",
+        "nameKey": "recipe.cream",
+        "input": [{ "id": "milk", "amount": 1 }],
+        "output": [{ "id": "cream", "amount": 1 }]
+      }
+    ]
+  }
+]

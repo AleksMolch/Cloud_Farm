@@ -1,0 +1,30 @@
+[
+  {
+    "id": "meadow",
+    "nameKey": "zone.meadow",
+    "unlockCost": [],
+    "defaultUnlocked": true,
+    "labelPosition": { "x": 240, "y": 555 }
+  },
+  {
+    "id": "terrace",
+    "nameKey": "zone.terrace",
+    "unlockCost": [{ "id": "coin", "amount": 80 }],
+    "defaultUnlocked": false,
+    "labelPosition": { "x": 845, "y": 565 }
+  },
+  {
+    "id": "yard",
+    "nameKey": "zone.yard",
+    "unlockCost": [{ "id": "coin", "amount": 180 }],
+    "defaultUnlocked": false,
+    "labelPosition": { "x": 1060, "y": 625 }
+  },
+  {
+    "id": "mill",
+    "nameKey": "zone.mill",
+    "unlockCost": [{ "id": "coin", "amount": 350 }],
+    "defaultUnlocked": false,
+    "labelPosition": { "x": 620, "y": 635 }
+  }
+]

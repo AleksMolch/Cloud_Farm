@@ -1,0 +1,25 @@
+{
+  "name": "cloud-farm",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Ферма на Облаке — cozy idle farm tycoon for Playgama and Yandex Games",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "phaser": "3.90.0"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "sharp": "0.35.5",
+    "typescript": "5.9.3",
+    "vite": "7.3.8",
+    "vitest": "3.2.7"
+  }
+}

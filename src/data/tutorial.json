@@ -1,0 +1,26 @@
+[
+  {
+    "id": "collect_wheat",
+    "textKey": "tutorial.collect_wheat",
+    "highlight": { "kind": "object", "id": "plot_wheat" },
+    "goal": { "type": "collect", "objectId": "plot_wheat" },
+    "reward": []
+  },
+  {
+    "id": "first_order",
+    "textKey": "tutorial.first_order",
+    "highlight": { "kind": "button", "id": "orders" },
+    "goal": { "type": "order_completed" },
+    "reward": []
+  },
+  {
+    "id": "upgrade_plot",
+    "textKey": "tutorial.upgrade_plot",
+    "highlight": { "kind": "object", "id": "plot_wheat" },
+    "goal": { "type": "upgrade", "objectId": "plot_wheat" },
+    "reward": [
+      { "id": "coin", "amount": 20 },
+      { "id": "crystal", "amount": 1 }
+    ]
+  }
+]
