@@ -17,6 +17,7 @@ import { ProductionService } from './ProductionService';
 import { SaveScheduler, SaveService } from './SaveService';
 import { TimeService } from './TimeService';
 import { TutorialService } from './TutorialService';
+import { UnlockService } from './UnlockService';
 import { UpgradeService } from './UpgradeService';
 
 export interface GameContextOptions {
@@ -39,6 +40,7 @@ export class GameContext {
   readonly economy: EconomyService;
   readonly production: ProductionService;
   readonly upgrades: UpgradeService;
+  readonly unlocks: UnlockService;
   readonly orders: OrderService;
   readonly offline: OfflineProgressService;
   readonly tutorial: TutorialService;
@@ -71,6 +73,14 @@ export class GameContext {
       this.data,
       this.economy,
       this.bus,
+    );
+    this.unlocks = new UnlockService(
+      this.state,
+      this.data,
+      this.economy,
+      this.production,
+      this.bus,
+      this.time,
     );
     this.orders = new OrderService(this.state, this.data, this.economy, this.bus);
     this.offline = new OfflineProgressService(this.data);
