@@ -19,12 +19,12 @@ function setup() {
 describe('UpgradeService', () => {
   it('grows the price exponentially', () => {
     const { state, economy, upgrades } = setup();
-    expect(upgrades.getUpgradeCost('plot_wheat')).toEqual([{ id: 'coin', amount: 25 }]);
+    expect(upgrades.getUpgradeCost('plot_wheat')).toEqual([{ id: 'coin', amount: 20 }]);
 
-    economy.grant([{ id: 'coin', amount: 25 }]);
+    economy.grant([{ id: 'coin', amount: 20 }]);
     expect(upgrades.upgrade('plot_wheat')).toBe(true);
     expect(state.objects.plot_wheat.level).toBe(2);
-    expect(upgrades.getUpgradeCost('plot_wheat')).toEqual([{ id: 'coin', amount: 35 }]);
+    expect(upgrades.getUpgradeCost('plot_wheat')).toEqual([{ id: 'coin', amount: 28 }]);
   });
 
   it('does not upgrade without enough coins', () => {

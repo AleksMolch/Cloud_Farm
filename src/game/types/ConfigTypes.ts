@@ -63,7 +63,7 @@ export interface ZoneConfig {
   nameKey: string;
   unlockCost: ResourceAmount[];
   defaultUnlocked: boolean;
-  labelPosition: PositionConfig;
+  labelPosition?: PositionConfig;
 }
 
 export interface HelperConfig {

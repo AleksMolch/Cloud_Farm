@@ -6,19 +6,52 @@
     "nameKey": "animal.chicken",
     "resourceId": "egg",
     "icon": "animal_chicken",
-    "position": { "x": 1080, "y": 430 },
-    "unlockCost": [{ "id": "coin", "amount": 100 }],
+    "position": {
+      "x": 1070,
+      "y": 415
+    },
+    "unlockCost": [
+      {
+        "id": "coin",
+        "amount": 100
+      }
+    ],
     "upgrade": {
-      "baseCost": [{ "id": "coin", "amount": 80 }],
+      "baseCost": [
+        {
+          "id": "coin",
+          "amount": 80
+        }
+      ],
       "growth": 1.45,
       "maxLevel": 5
     },
     "levels": [
-      { "level": 1, "seconds": 18, "yield": 1 },
-      { "level": 2, "seconds": 20, "yield": 2 },
-      { "level": 3, "seconds": 22, "yield": 3 },
-      { "level": 4, "seconds": 24, "yield": 4 },
-      { "level": 5, "seconds": 26, "yield": 5 }
+      {
+        "level": 1,
+        "seconds": 18,
+        "yield": 1
+      },
+      {
+        "level": 2,
+        "seconds": 20,
+        "yield": 2
+      },
+      {
+        "level": 3,
+        "seconds": 22,
+        "yield": 3
+      },
+      {
+        "level": 4,
+        "seconds": 24,
+        "yield": 4
+      },
+      {
+        "level": 5,
+        "seconds": 26,
+        "yield": 5
+      }
     ]
   },
   {
@@ -28,19 +61,52 @@
     "nameKey": "animal.cow",
     "resourceId": "milk",
     "icon": "animal_cow",
-    "position": { "x": 990, "y": 520 },
-    "unlockCost": [{ "id": "coin", "amount": 450 }],
+    "position": {
+      "x": 960,
+      "y": 485
+    },
+    "unlockCost": [
+      {
+        "id": "coin",
+        "amount": 450
+      }
+    ],
     "upgrade": {
-      "baseCost": [{ "id": "coin", "amount": 120 }],
+      "baseCost": [
+        {
+          "id": "coin",
+          "amount": 120
+        }
+      ],
       "growth": 1.45,
       "maxLevel": 5
     },
     "levels": [
-      { "level": 1, "seconds": 30, "yield": 1 },
-      { "level": 2, "seconds": 33, "yield": 2 },
-      { "level": 3, "seconds": 36, "yield": 3 },
-      { "level": 4, "seconds": 39, "yield": 4 },
-      { "level": 5, "seconds": 42, "yield": 5 }
+      {
+        "level": 1,
+        "seconds": 30,
+        "yield": 1
+      },
+      {
+        "level": 2,
+        "seconds": 33,
+        "yield": 2
+      },
+      {
+        "level": 3,
+        "seconds": 36,
+        "yield": 3
+      },
+      {
+        "level": 4,
+        "seconds": 39,
+        "yield": 4
+      },
+      {
+        "level": 5,
+        "seconds": 42,
+        "yield": 5
+      }
     ]
   },
   {
@@ -50,19 +116,52 @@
     "nameKey": "animal.sheep",
     "resourceId": "wool",
     "icon": "animal_sheep",
-    "position": { "x": 1120, "y": 545 },
-    "unlockCost": [{ "id": "coin", "amount": 900 }],
+    "position": {
+      "x": 1110,
+      "y": 505
+    },
+    "unlockCost": [
+      {
+        "id": "coin",
+        "amount": 900
+      }
+    ],
     "upgrade": {
-      "baseCost": [{ "id": "coin", "amount": 160 }],
+      "baseCost": [
+        {
+          "id": "coin",
+          "amount": 160
+        }
+      ],
       "growth": 1.45,
       "maxLevel": 5
     },
     "levels": [
-      { "level": 1, "seconds": 45, "yield": 1 },
-      { "level": 2, "seconds": 48, "yield": 2 },
-      { "level": 3, "seconds": 51, "yield": 3 },
-      { "level": 4, "seconds": 54, "yield": 4 },
-      { "level": 5, "seconds": 57, "yield": 5 }
+      {
+        "level": 1,
+        "seconds": 45,
+        "yield": 1
+      },
+      {
+        "level": 2,
+        "seconds": 48,
+        "yield": 2
+      },
+      {
+        "level": 3,
+        "seconds": 51,
+        "yield": 3
+      },
+      {
+        "level": 4,
+        "seconds": 54,
+        "yield": 4
+      },
+      {
+        "level": 5,
+        "seconds": 57,
+        "yield": 5
+      }
     ]
   }
 ]

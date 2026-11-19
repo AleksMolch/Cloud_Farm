@@ -39,6 +39,10 @@ export interface GameEventMap {
   };
   'offline:claimed': { multiplier: number; gains: ResourceAmount[] };
   'goal:changed': void;
+  'ui:open-panel': {
+    panel: 'orders' | 'shop' | 'object' | 'settings' | 'offline' | 'storage';
+    objectId?: string;
+  };
 }
 
 type Handler<T> = (payload: T) => void;

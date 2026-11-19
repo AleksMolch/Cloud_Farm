@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 220">
+  <defs>
+    <linearGradient id="bakeryWall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff2d2"/>
+      <stop offset="1" stop-color="#ecd7ae"/>
+    </linearGradient>
+    <linearGradient id="bakeryRoof" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffa95c"/>
+      <stop offset="1" stop-color="#e57d3e"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="120" cy="208" rx="84" ry="10" fill="#3f7f3c" opacity="0.2"/>
+  <path d="M62 86 L178 86 L184 200 C150 208 92 208 56 200 Z" fill="url(#bakeryWall)" stroke="#c6a774" stroke-width="4"/>
+  <path d="M44 92 C54 48 186 48 196 92 Z" fill="url(#bakeryRoof)" stroke="#c9642f" stroke-width="4"/>
+  <path d="M68 92 C82 64 158 64 172 92" fill="#ffc889" opacity="0.65"/>
+  <rect x="96" y="158" width="50" height="44" rx="15" fill="#a86a3b" stroke="#7f4c28" stroke-width="3"/>
+  <circle cx="138" cy="180" r="3" fill="#ffe9bd"/>
+  <rect x="70" y="116" width="40" height="32" rx="10" fill="#9fd8ef" stroke="#6e9fb7" stroke-width="3"/>
+  <path d="M70 132 H110" stroke="#6e9fb7" stroke-width="3"/>
+  <rect x="134" y="116" width="40" height="32" rx="10" fill="#9fd8ef" stroke="#6e9fb7" stroke-width="3"/>
+  <path d="M134 132 H174" stroke="#6e9fb7" stroke-width="3"/>
+  <g>
+    <rect x="146" y="52" width="18" height="26" rx="6" fill="#d7a073" stroke="#b47a51" stroke-width="3"/>
+    <ellipse cx="155" cy="48" rx="20" ry="10" fill="#ffffff" opacity="0.75"/>
+    <ellipse cx="170" cy="38" rx="14" ry="8" fill="#ffffff" opacity="0.55"/>
+  </g>
+  <g>
+    <path d="M72 74 C66 86 78 92 92 88 C104 84 108 74 102 68 Z" fill="#f6d48f" stroke="#c99b4d" stroke-width="2"/>
+    <path d="M80 74 C84 68 94 68 96 74 C98 80 88 84 82 80 Z" fill="#e7a33d"/>
+    <path d="M82 62 C84 54 94 54 96 62" fill="none" stroke="#b47a51" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g fill="#ffe7b8">
+    <path d="M46 198 C50 188 62 188 66 198 Z"/>
+    <path d="M174 198 C178 188 190 188 194 198 Z"/>
+  </g>
+  <g fill="#ffb3c1" opacity="0.9">
+    <circle cx="52" cy="184" r="4"/>
+    <circle cx="60" cy="180" r="3"/>
+    <circle cx="184" cy="184" r="4"/>
+    <circle cx="192" cy="178" r="3"/>
+  </g>
+</svg>

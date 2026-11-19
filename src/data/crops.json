@@ -6,20 +6,48 @@
     "nameKey": "crop.wheat",
     "resourceId": "wheat",
     "icon": "crop_wheat",
-    "position": { "x": 300, "y": 410 },
+    "position": {
+      "x": 280,
+      "y": 390
+    },
     "unlockedByDefault": true,
     "unlockCost": [],
     "upgrade": {
-      "baseCost": [{ "id": "coin", "amount": 25 }],
+      "baseCost": [
+        {
+          "id": "coin",
+          "amount": 20
+        }
+      ],
       "growth": 1.4,
       "maxLevel": 5
     },
     "levels": [
-      { "level": 1, "seconds": 6, "yield": 1 },
-      { "level": 2, "seconds": 6, "yield": 2 },
-      { "level": 3, "seconds": 7, "yield": 3 },
-      { "level": 4, "seconds": 7, "yield": 4 },
-      { "level": 5, "seconds": 8, "yield": 5 }
+      {
+        "level": 1,
+        "seconds": 6,
+        "yield": 1
+      },
+      {
+        "level": 2,
+        "seconds": 6,
+        "yield": 2
+      },
+      {
+        "level": 3,
+        "seconds": 7,
+        "yield": 3
+      },
+      {
+        "level": 4,
+        "seconds": 7,
+        "yield": 4
+      },
+      {
+        "level": 5,
+        "seconds": 8,
+        "yield": 5
+      }
     ]
   },
   {
@@ -29,19 +57,52 @@
     "nameKey": "crop.carrot",
     "resourceId": "carrot",
     "icon": "crop_carrot",
-    "position": { "x": 430, "y": 370 },
-    "unlockCost": [{ "id": "coin", "amount": 20 }],
+    "position": {
+      "x": 470,
+      "y": 310
+    },
+    "unlockCost": [
+      {
+        "id": "coin",
+        "amount": 20
+      }
+    ],
     "upgrade": {
-      "baseCost": [{ "id": "coin", "amount": 40 }],
+      "baseCost": [
+        {
+          "id": "coin",
+          "amount": 40
+        }
+      ],
       "growth": 1.4,
       "maxLevel": 5
     },
     "levels": [
-      { "level": 1, "seconds": 8, "yield": 1 },
-      { "level": 2, "seconds": 9, "yield": 2 },
-      { "level": 3, "seconds": 10, "yield": 3 },
-      { "level": 4, "seconds": 11, "yield": 4 },
-      { "level": 5, "seconds": 12, "yield": 5 }
+      {
+        "level": 1,
+        "seconds": 8,
+        "yield": 1
+      },
+      {
+        "level": 2,
+        "seconds": 9,
+        "yield": 2
+      },
+      {
+        "level": 3,
+        "seconds": 10,
+        "yield": 3
+      },
+      {
+        "level": 4,
+        "seconds": 11,
+        "yield": 4
+      },
+      {
+        "level": 5,
+        "seconds": 12,
+        "yield": 5
+      }
     ]
   },
   {
@@ -51,19 +112,52 @@
     "nameKey": "crop.strawberry",
     "resourceId": "strawberry",
     "icon": "crop_strawberry",
-    "position": { "x": 780, "y": 360 },
-    "unlockCost": [{ "id": "coin", "amount": 120 }],
+    "position": {
+      "x": 820,
+      "y": 345
+    },
+    "unlockCost": [
+      {
+        "id": "coin",
+        "amount": 120
+      }
+    ],
     "upgrade": {
-      "baseCost": [{ "id": "coin", "amount": 70 }],
+      "baseCost": [
+        {
+          "id": "coin",
+          "amount": 70
+        }
+      ],
       "growth": 1.4,
       "maxLevel": 5
     },
     "levels": [
-      { "level": 1, "seconds": 12, "yield": 1 },
-      { "level": 2, "seconds": 13, "yield": 2 },
-      { "level": 3, "seconds": 14, "yield": 3 },
-      { "level": 4, "seconds": 15, "yield": 4 },
-      { "level": 5, "seconds": 16, "yield": 5 }
+      {
+        "level": 1,
+        "seconds": 12,
+        "yield": 1
+      },
+      {
+        "level": 2,
+        "seconds": 13,
+        "yield": 2
+      },
+      {
+        "level": 3,
+        "seconds": 14,
+        "yield": 3
+      },
+      {
+        "level": 4,
+        "seconds": 15,
+        "yield": 4
+      },
+      {
+        "level": 5,
+        "seconds": 16,
+        "yield": 5
+      }
     ]
   },
   {
@@ -73,19 +167,52 @@
     "nameKey": "crop.cloudberry",
     "resourceId": "cloudberry",
     "icon": "crop_cloudberry",
-    "position": { "x": 910, "y": 395 },
-    "unlockCost": [{ "id": "coin", "amount": 400 }],
+    "position": {
+      "x": 950,
+      "y": 380
+    },
+    "unlockCost": [
+      {
+        "id": "coin",
+        "amount": 400
+      }
+    ],
     "upgrade": {
-      "baseCost": [{ "id": "coin", "amount": 120 }],
+      "baseCost": [
+        {
+          "id": "coin",
+          "amount": 120
+        }
+      ],
       "growth": 1.4,
       "maxLevel": 5
     },
     "levels": [
-      { "level": 1, "seconds": 18, "yield": 1 },
-      { "level": 2, "seconds": 19, "yield": 2 },
-      { "level": 3, "seconds": 20, "yield": 3 },
-      { "level": 4, "seconds": 21, "yield": 4 },
-      { "level": 5, "seconds": 22, "yield": 5 }
+      {
+        "level": 1,
+        "seconds": 18,
+        "yield": 1
+      },
+      {
+        "level": 2,
+        "seconds": 19,
+        "yield": 2
+      },
+      {
+        "level": 3,
+        "seconds": 20,
+        "yield": 3
+      },
+      {
+        "level": 4,
+        "seconds": 21,
+        "yield": 4
+      },
+      {
+        "level": 5,
+        "seconds": 22,
+        "yield": 5
+      }
     ]
   }
 ]

@@ -65,7 +65,7 @@ describe('TutorialService', () => {
       'collect_wheat',
       'first_order',
     ]);
-    economy.grant([{ id: 'coin', amount: 25 }]);
+    economy.grant([{ id: 'coin', amount: 20 }]);
 
     upgrades.upgrade('plot_wheat');
     expect(state.resources.coin).toBe(20);

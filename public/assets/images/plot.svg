@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 130">
+  <defs>
+    <linearGradient id="soil" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a86f43"/>
+      <stop offset="1" stop-color="#7c4c2d"/>
+    </linearGradient>
+    <linearGradient id="grassBase" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9fe97a"/>
+      <stop offset="1" stop-color="#60c256"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="100" cy="116" rx="82" ry="10" fill="#3f7f3c" opacity="0.25"/>
+  <rect x="16" y="52" width="168" height="60" rx="24" fill="url(#grassBase)"/>
+  <rect x="28" y="62" width="144" height="42" rx="18" fill="url(#soil)"/>
+  <g stroke="#6b4028" stroke-width="4" stroke-linecap="round" opacity="0.55">
+    <path d="M48 76 H152"/>
+    <path d="M58 88 H142"/>
+  </g>
+  <g fill="#59351f" opacity="0.55">
+    <circle cx="45" cy="96" r="4"/>
+    <circle cx="155" cy="78" r="3"/>
+    <circle cx="124" cy="98" r="3.5"/>
+  </g>
+  <g fill="#c8f79a" opacity="0.9">
+    <circle cx="36" cy="58" r="5"/>
+    <circle cx="56" cy="54" r="4"/>
+    <circle cx="164" cy="58" r="5"/>
+    <circle cx="146" cy="54" r="4"/>
+  </g>
+</svg>

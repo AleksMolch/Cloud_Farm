@@ -51,6 +51,7 @@ export async function createPlatform(): Promise<PlatformAdapter> {
       const adapter = new PlaygamaAdapter();
       await adapter.init();
       if (!forced && adapter.getPlatformId() === 'mock') {
+        await adapter.ready();
         console.info('[Platform] Playgama is running in mock mode, using local mock adapter');
         return initMock();
       }

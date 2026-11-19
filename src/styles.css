@@ -137,3 +137,64 @@ body {
     transform: translateX(40px) translateY(-12px);
   }
 }
+
+
+#rotate-hint {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: linear-gradient(180deg, #73cdf4 0%, #c9f1ff 55%, #f9fdff 100%);
+}
+
+.rotate-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 34px 38px;
+  border-radius: 32px;
+  background: rgba(255, 251, 238, 0.9);
+  box-shadow: 0 20px 50px rgba(31, 83, 115, 0.2);
+  text-align: center;
+}
+
+.rotate-icon {
+  font-size: 58px;
+  line-height: 1;
+  color: #58b05f;
+  animation: rotate-hint-turn 2.4s ease-in-out infinite;
+}
+
+.rotate-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: #2f5d50;
+}
+
+.rotate-subtitle {
+  font-size: 18px;
+  font-weight: 700;
+  color: #4f748b;
+}
+
+.rotate-note {
+  max-width: 280px;
+  font-size: 14px;
+  color: #6b8b9c;
+}
+
+@media (orientation: portrait) and (max-width: 900px) {
+  #rotate-hint {
+    display: flex;
+  }
+}
+
+@keyframes rotate-hint-turn {
+  0%, 20% { transform: rotate(0deg); }
+  50%, 70% { transform: rotate(90deg); }
+  100% { transform: rotate(0deg); }
+}

@@ -166,5 +166,8 @@
   "ui.page": "{page}/{pages}",
   "ui.level_short": "Lv. {n}",
   "ui.coin_short": "coins",
-  "ui.crystal_short": "crystals"
+  "ui.crystal_short": "crystals",
+  "ui.soon": "Coming soon…",
+  "hud.storage": "Storage",
+  "storage.title": "Resource storage"
 }

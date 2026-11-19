@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 150">
+  <defs>
+    <linearGradient id="cowBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#eef3f8"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="92" cy="135" rx="56" ry="9" fill="#3f7f3c" opacity="0.2"/>
+  <g stroke="#d9b08c" stroke-width="9" stroke-linecap="round">
+    <path d="M56 110 L54 132"/>
+    <path d="M120 110 L122 132"/>
+  </g>
+  <path d="M54 132 L46 136 M54 132 L55 138 M54 132 L62 136" stroke="#b58a65" stroke-width="5" stroke-linecap="round"/>
+  <path d="M122 132 L114 136 M122 132 L123 138 M122 132 L130 136" stroke="#b58a65" stroke-width="5" stroke-linecap="round"/>
+  <ellipse cx="90" cy="88" rx="58" ry="38" fill="url(#cowBody)" stroke="#dbe6ee" stroke-width="3"/>
+  <g fill="#9b6a4a">
+    <path d="M53 72 C62 60 80 62 86 74 C78 84 60 86 53 72 Z"/>
+    <path d="M108 64 C122 58 138 66 140 80 C128 88 112 84 106 74 Z"/>
+    <ellipse cx="94" cy="104" rx="19" ry="12"/>
+  </g>
+  <path d="M133 96 C150 96 158 104 156 114 C146 116 138 108 133 100 Z" fill="#f6fbff" stroke="#dbe6ee" stroke-width="2"/>
+  <path d="M149 112 C156 120 156 128 150 132" stroke="#9b6a4a" stroke-width="4" stroke-linecap="round" fill="none"/>
+  <circle cx="154" cy="132" r="4" fill="#9b6a4a"/>
+  <g>
+    <ellipse cx="44" cy="58" rx="32" ry="27" fill="#ffffff" stroke="#dbe6ee" stroke-width="3"/>
+    <path d="M22 46 C16 32 26 28 34 40 C36 28 46 28 46 42 C50 32 60 36 56 50 C50 60 30 60 22 52 Z" fill="#f4f8fb" stroke="#dbe6ee" stroke-width="2"/>
+    <ellipse cx="34" cy="68" rx="17" ry="13" fill="#ffc9d4" stroke="#efa6b5" stroke-width="2"/>
+    <circle cx="28" cy="66" r="2.2" fill="#b76a7e"/>
+    <circle cx="40" cy="66" r="2.2" fill="#b76a7e"/>
+    <circle cx="31" cy="52" r="4" fill="#2f3c4d"/>
+    <circle cx="45" cy="52" r="4" fill="#2f3c4d"/>
+    <circle cx="32.5" cy="50.5" r="1.4" fill="#ffffff"/>
+    <circle cx="46.5" cy="50.5" r="1.4" fill="#ffffff"/>
+    <path d="M20 34 C12 26 8 30 14 38" fill="#f0d29a" stroke="#d3b271" stroke-width="2"/>
+    <path d="M58 34 C66 26 70 30 64 38" fill="#f0d29a" stroke="#d3b271" stroke-width="2"/>
+    <path d="M26 44 C18 40 14 46 20 50" fill="#e7f0f7" stroke="#dbe6ee" stroke-width="2"/>
+    <path d="M52 44 C60 40 64 46 58 50" fill="#e7f0f7" stroke="#dbe6ee" stroke-width="2"/>
+  </g>
+</svg>

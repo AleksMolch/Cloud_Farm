@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 130">
+  <defs>
+    <linearGradient id="carrot" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffa94d"/>
+      <stop offset="1" stop-color="#e56a1e"/>
+    </linearGradient>
+  </defs>
+  <g stroke="#4fa64a" stroke-width="7" stroke-linecap="round" fill="none">
+    <path d="M55 56 C50 32 38 22 24 16"/>
+    <path d="M55 56 C56 30 56 20 60 8"/>
+    <path d="M55 56 C64 34 74 24 88 18"/>
+  </g>
+  <g fill="#74cf5d">
+    <path d="M24 16 C14 20 12 32 22 34 C30 35 34 26 24 16 Z"/>
+    <path d="M60 8 C50 14 50 26 60 28 C70 28 70 16 60 8 Z"/>
+    <path d="M88 18 C78 22 78 34 88 35 C97 35 97 25 88 18 Z"/>
+  </g>
+  <path d="M55 58 C74 66 68 118 55 126 C42 118 36 66 55 58 Z" fill="url(#carrot)" stroke="#c95716" stroke-width="3"/>
+  <g stroke="#c95716" stroke-width="3" stroke-linecap="round" opacity="0.6">
+    <path d="M45 76 H56"/>
+    <path d="M48 92 H62"/>
+    <path d="M51 108 H62"/>
+  </g>
+  <ellipse cx="50" cy="68" rx="4" ry="9" fill="#ffd2a1" opacity="0.7"/>
+</svg>

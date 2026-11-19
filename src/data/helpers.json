@@ -4,19 +4,35 @@
     "nameKey": "helper.cat",
     "descriptionKey": "helper.cat.desc",
     "icon": "helper_cat",
-    "cost": [{ "id": "crystal", "amount": 3 }],
+    "cost": [
+      {
+        "id": "crystal",
+        "amount": 3
+      }
+    ],
     "effect": "auto_collect",
     "targetObjectId": "plot_wheat",
-    "position": { "x": 190, "y": 520 }
+    "position": {
+      "x": 150,
+      "y": 455
+    }
   },
   {
     "id": "dog",
     "nameKey": "helper.dog",
     "descriptionKey": "helper.dog.desc",
     "icon": "helper_dog",
-    "cost": [{ "id": "crystal", "amount": 5 }],
+    "cost": [
+      {
+        "id": "crystal",
+        "amount": 5
+      }
+    ],
     "effect": "animal_speed",
     "value": 0.2,
-    "position": { "x": 1180, "y": 330 }
+    "position": {
+      "x": 1200,
+      "y": 250
+    }
   }
 ]

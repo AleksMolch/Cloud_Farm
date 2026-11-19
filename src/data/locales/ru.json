@@ -142,7 +142,7 @@
   "ad.mock_interstitial": "Это тестовый interstitial. Продолжаем через секунду.",
   "toast.order_completed": "Заказ выполнен!",
   "toast.order_reward": "+{n} монет",
-  "toast.upgraded": "{name} улучшен до ур. {level}",
+  "toast.upgraded": "Улучшено: {name} · ур. {level}",
   "toast.unlocked": "Открыто: {name}",
   "toast.zone_unlocked": "Новая зона: {name}",
   "toast.helper_hired": "Помощник: {name}",
@@ -166,5 +166,8 @@
   "ui.page": "{page}/{pages}",
   "ui.level_short": "Ур. {n}",
   "ui.coin_short": "монет",
-  "ui.crystal_short": "крист."
+  "ui.crystal_short": "крист.",
+  "ui.soon": "Скоро…",
+  "hud.storage": "Склад",
+  "storage.title": "Склад ресурсов"
 }

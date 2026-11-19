@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 300">
+  <defs>
+    <linearGradient id="millWall" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f2ddb5"/>
+      <stop offset="0.55" stop-color="#e7c990"/>
+      <stop offset="1" stop-color="#d5ae6f"/>
+    </linearGradient>
+    <linearGradient id="millRoof" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f07a6c"/>
+      <stop offset="1" stop-color="#c94c47"/>
+    </linearGradient>
+  </defs>
+  <ellipse cx="130" cy="286" rx="88" ry="12" fill="#3f7f3c" opacity="0.22"/>
+  <g stroke="#8a5a34" stroke-width="8" stroke-linecap="round" opacity="0.85">
+    <path d="M130 54 L34 118"/>
+    <path d="M130 54 L226 118"/>
+    <path d="M130 54 L82 270"/>
+    <path d="M130 54 L178 270"/>
+  </g>
+  <g fill="#f6e7c8" stroke="#c9a46b" stroke-width="3">
+    <path d="M34 118 L44 112 L54 120 L44 127 Z"/>
+    <path d="M226 118 L216 112 L206 120 L216 127 Z"/>
+    <path d="M82 270 L90 266 L98 270 L88 276 Z"/>
+    <path d="M178 270 L170 266 L162 270 L172 276 Z"/>
+  </g>
+  <path d="M84 92 L176 92 L190 262 C160 270 100 270 70 262 Z" fill="url(#millWall)" stroke="#b88c54" stroke-width="4"/>
+  <path d="M96 92 C102 72 158 72 164 92" fill="#efcf9f" stroke="#b88c54" stroke-width="3"/>
+  <path d="M78 90 C86 48 174 48 182 90 Z" fill="url(#millRoof)" stroke="#a83f3b" stroke-width="4"/>
+  <rect x="116" y="206" width="30" height="56" rx="15" fill="#8a5a34" stroke="#6b4226" stroke-width="3"/>
+  <circle cx="138" cy="236" r="3" fill="#f6e7c8"/>
+  <rect x="102" y="128" width="26" height="28" rx="10" fill="#9fd8ef" stroke="#6e9fb7" stroke-width="3"/>
+  <path d="M102 142 H128" stroke="#6e9fb7" stroke-width="3"/>
+  <rect x="158" y="128" width="22" height="24" rx="8" fill="#9fd8ef" stroke="#6e9fb7" stroke-width="3"/>
+  <path d="M158 140 H180" stroke="#6e9fb7" stroke-width="3"/>
+  <g fill="#e7c990" stroke="#b88c54" stroke-width="2">
+    <circle cx="98" cy="176" r="6"/>
+    <circle cx="116" cy="188" r="5"/>
+    <circle cx="158" cy="178" r="6"/>
+    <circle cx="172" cy="196" r="5"/>
+    <circle cx="90" cy="214" r="5"/>
+  </g>
+  <g stroke="#8a5a34" stroke-width="5" stroke-linecap="round">
+    <path d="M118 96 L130 130"/>
+    <path d="M142 96 L130 130"/>
+  </g>
+  <circle cx="130" cy="54" r="9" fill="#8a5a34" stroke="#6b4226" stroke-width="3"/>
+  <g fill="#fff4d8" opacity="0.85">
+    <circle cx="112" cy="106" r="4"/>
+    <circle cx="148" cy="104" r="3"/>
+  </g>
+</svg>

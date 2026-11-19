@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 130">
+  <defs>
+    <linearGradient id="berry" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ff7f96"/>
+      <stop offset="1" stop-color="#e63f63"/>
+    </linearGradient>
+  </defs>
+  <g stroke="#4fa64a" stroke-width="6" stroke-linecap="round" fill="none">
+    <path d="M30 100 C24 78 25 62 36 48"/>
+    <path d="M55 104 C55 82 55 64 55 46"/>
+    <path d="M80 100 C86 78 85 62 74 48"/>
+  </g>
+  <g fill="#6fcb5b" stroke="#3f8f3d" stroke-width="2">
+    <path d="M36 49 C26 44 20 33 32 32 C38 32 42 40 42 44 C48 32 55 30 58 38 C60 44 52 50 49 52 C58 50 66 54 64 62 C62 68 52 66 46 60 C46 68 38 72 34 66 C30 60 32 54 36 49 Z"/>
+    <path d="M74 49 C64 44 58 33 70 32 C76 32 80 40 80 44 C86 32 93 30 96 38 C98 44 90 50 87 52 C96 50 104 54 102 62 C100 68 90 66 84 60 C84 68 76 72 72 66 C68 60 70 54 74 49 Z"/>
+  </g>
+  <path d="M55 56 C72 56 82 70 80 88 C78 108 64 122 55 126 C46 122 32 108 30 88 C28 70 38 56 55 56 Z" fill="url(#berry)" stroke="#c92e4e" stroke-width="3"/>
+  <g fill="#ffe3a1">
+    <circle cx="44" cy="76" r="2.2"/>
+    <circle cx="58" cy="72" r="2.2"/>
+    <circle cx="68" cy="84" r="2.2"/>
+    <circle cx="50" cy="94" r="2.2"/>
+    <circle cx="62" cy="104" r="2.2"/>
+    <circle cx="40" cy="90" r="2"/>
+    <circle cx="54" cy="114" r="1.8"/>
+  </g>
+  <ellipse cx="44" cy="68" rx="5" ry="9" fill="#ffd6de" opacity="0.6" transform="rotate(-24 44 68)"/>
+</svg>
