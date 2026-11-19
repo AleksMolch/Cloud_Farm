@@ -1,0 +1,17 @@
+{
+  "advertisement": {
+    "minimumDelayBetweenInterstitial": 60,
+    "interstitial": {
+      "placements": [
+        { "id": "zone_unlocked" },
+        { "id": "milestone" }
+      ]
+    },
+    "rewarded": {
+      "placements": [
+        { "id": "offline_double" },
+        { "id": "speed_up" }
+      ]
+    }
+  }
+}
