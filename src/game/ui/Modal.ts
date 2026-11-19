@@ -61,6 +61,10 @@ export class ModalPanel {
       30,
     );
 
+    const inputBlocker = scene.add
+      .rectangle(0, 0, width, height, 0xffffff, 0.001)
+      .setInteractive();
+
     const background = scene.add.graphics();
     background.fillStyle(COLORS.panel, 1);
     background.fillRoundedRect(-width / 2, -height / 2, width, height, 30);
@@ -88,8 +92,8 @@ export class ModalPanel {
       options.closable === false
         ? null
         : new Button(scene, width / 2 - 38, -height / 2 + 38, {
-            width: 54,
-            height: 54,
+            width: 56,
+            height: 56,
             label: '×',
             fontSize: 30,
             fill: COLORS.inkSoft,
@@ -98,7 +102,7 @@ export class ModalPanel {
           });
 
     this.body = scene.add.container(0, 0);
-    this.root.add([shadow, background, this.titleText, this.body]);
+    this.root.add([shadow, background, inputBlocker, this.titleText, this.body]);
     if (this.closeButton) this.root.add(this.closeButton);
 
     if (options.closable !== false && options.closeOnOverlay !== false) {

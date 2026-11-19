@@ -1,5 +1,10 @@
 import type { GameData, OrderTemplateConfig } from '../types/ConfigTypes';
-import type { ActiveOrder, GameState, ResourceAmount } from '../types/GameState';
+import type {
+  ActiveOrder,
+  GameState,
+  ResourceAmount,
+  ResourceId,
+} from '../types/GameState';
 import type { EconomyService } from './EconomyService';
 import type { EventBus } from './EventBus';
 
@@ -26,18 +31,39 @@ export class OrderService {
       if ((template.minOrdersCompleted ?? 0) > this.state.stats.ordersCompleted) {
         return false;
       }
-      return template.requires.every((required) => {
-        const producerId = this.data.producerByResource[required.id];
-        if (!producerId) return false;
-        const producerConfig = this.data.objects[producerId];
-        const producerState = this.state.objects[producerId];
-        if (!producerConfig || !producerState) return false;
-        return (
-          producerState.unlocked &&
-          this.state.zones[producerConfig.zoneId]?.unlocked === true
-        );
-      });
+      return template.requires.every((required) =>
+        this.isResourceAvailable(required.id, new Set()),
+      );
     });
+  }
+
+  private isResourceAvailable(
+    resourceId: ResourceId,
+    visiting: Set<string>,
+  ): boolean {
+    if (visiting.has(resourceId)) return false;
+    const producerId = this.data.producerByResource[resourceId];
+    if (!producerId) return false;
+    const config = this.data.objects[producerId];
+    const objectState = this.state.objects[producerId];
+    if (!config || !objectState) return false;
+    if (
+      !objectState.unlocked ||
+      this.state.zones[config.zoneId]?.unlocked !== true
+    ) {
+      return false;
+    }
+    if (config.kind !== 'building') return true;
+
+    const nextVisiting = new Set(visiting);
+    nextVisiting.add(resourceId);
+    return config.recipes.some(
+      (recipe) =>
+        recipe.output.some((output) => output.id === resourceId) &&
+        recipe.input.every((input) =>
+          this.isResourceAvailable(input.id, nextVisiting),
+        ),
+    );
   }
 
   ensureOrders(now: number): boolean {

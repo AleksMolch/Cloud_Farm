@@ -178,27 +178,22 @@ export class PlaygamaAdapter implements PlatformAdapter {
   }
 
   async saveData(key: string, value: unknown): Promise<void> {
-    if (!this.bridge) return;
+    if (!this.bridge) throw new Error('Playgama Bridge is not initialized');
     await this.bridge.storage.set(key, JSON.stringify(value));
   }
 
   async loadData<T>(key: string, fallback: T): Promise<T> {
-    if (!this.bridge) return fallback;
-    try {
-      const raw = await this.bridge.storage.get(key);
-      if (raw === null || raw === undefined) return fallback;
-      if (typeof raw === 'string') {
-        try {
-          return JSON.parse(raw) as T;
-        } catch {
-          return raw as unknown as T;
-        }
+    if (!this.bridge) throw new Error('Playgama Bridge is not initialized');
+    const raw = await this.bridge.storage.get(key);
+    if (raw === null || raw === undefined) return fallback;
+    if (typeof raw === 'string') {
+      try {
+        return JSON.parse(raw) as T;
+      } catch {
+        return raw as unknown as T;
       }
-      return raw as T;
-    } catch (error) {
-      console.warn('[PlaygamaAdapter] load failed', error);
-      return fallback;
     }
+    return raw as T;
   }
 
   isRewardedSupported(): boolean {

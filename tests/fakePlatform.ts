@@ -17,6 +17,7 @@ export class FakePlatform implements PlatformAdapter {
   rewardedCalls: Array<string | undefined> = [];
   interstitialCalls: Array<string | undefined> = [];
   saves = 0;
+  failSaves = 0;
   private readonly store = new Map<string, unknown>();
   private readonly pauseCallbacks = new Set<PauseCallback>();
   private readonly audioCallbacks = new Set<AudioCallback>();
@@ -69,6 +70,10 @@ export class FakePlatform implements PlatformAdapter {
   }
 
   async saveData(key: string, value: unknown): Promise<void> {
+    if (this.failSaves > 0) {
+      this.failSaves -= 1;
+      throw new Error('save failed');
+    }
     this.saves += 1;
     this.store.set(key, JSON.parse(JSON.stringify(value)));
   }

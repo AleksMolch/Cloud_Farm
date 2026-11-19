@@ -68,6 +68,7 @@ export interface GameState {
   helpers: Record<string, boolean>;
   orders: ActiveOrder[];
   completedTutorialSteps: string[];
+  pendingOffline: OfflineReport | null;
   settings: GameSettings;
   stats: GameStats;
   lastSaveTimestamp: number;

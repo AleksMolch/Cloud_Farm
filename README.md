@@ -97,11 +97,11 @@ src/
       AdManager.ts
       GameContext.ts          # composition root игровых сервисов
     platform/
-      PlatformAdapter.ts      # единый интерфейс
       MockAdapter.ts
       PlaygamaAdapter.ts
       YandexAdapter.ts
       createPlatform.ts       # auto-detect + fallback
+    types/PlatformTypes.ts    # PlatformAdapter interface
     types/
     ui/                       # Button, Modal, theme, floating text
     views/FarmObjectView.ts
@@ -144,7 +144,9 @@ docs/                         # спека, план, ассеты, платфо
 - Autosave: каждые 20 секунд, с debounce 250 мс после значимых действий, на `pagehide`/`visibilitychange`.
 - Повреждённое сохранение или версия из будущего игнорируются, игра стартует безопасно.
 - Для Playgama используется `bridge.storage`, для Yandex — `ysdk.getStorage()`, для Mock — `localStorage`.
+- Ошибка чтения сохранения не считается «новым игроком»: boot показывает безопасный экран ошибки, чтобы не перезаписать реальный прогресс.
 - Оффлайн-доход считается от `lastSaveTimestamp`, максимум 2 часа, не более 60 циклов на объект.
+- Невостребованный оффлайн-отчёт хранится в сохранении (`pendingOffline`) и переживает autosave/reload; claim сохраняется атомарно, при ошибке записи награда откатывается и остаётся в модалке.
 
 ## Тесты
 

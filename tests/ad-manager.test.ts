@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { createInitialState } from '../src/game/data/createInitialState';
 import { loadGameData } from '../src/game/data/loadGameData';
 import { AdManager } from '../src/game/systems/AdManager';
+import { GameplayLifecycle } from '../src/game/systems/GameplayLifecycle';
 import { EventBus } from '../src/game/systems/EventBus';
 import { TimeService } from '../src/game/systems/TimeService';
 import { FakePlatform } from './fakePlatform';
@@ -14,7 +15,9 @@ function setup() {
   const platform = new FakePlatform();
   const bus = new EventBus();
   const time = new TimeService(() => NOW);
-  const ads = new AdManager(platform, state, bus, time);
+  const lifecycle = new GameplayLifecycle(platform);
+  lifecycle.start();
+  const ads = new AdManager(platform, state, bus, time, lifecycle);
   return { state, platform, bus, ads };
 }
 
@@ -28,7 +31,7 @@ describe('AdManager rewarded', () => {
 
     expect(result).toBe(true);
     expect(platform.gameplayStops).toBe(1);
-    expect(platform.gameplayStarts).toBe(1);
+    expect(platform.gameplayStarts).toBe(2);
     expect(platform.rewardedCalls).toEqual(['offline_double']);
     expect(state.stats.adsWatched).toBe(1);
     expect(saveRequested).toHaveBeenCalledTimes(1);
@@ -45,7 +48,7 @@ describe('AdManager rewarded', () => {
     expect(result).toBe(false);
     expect(state.stats.adsWatched).toBe(0);
     expect(saveRequested).not.toHaveBeenCalled();
-    expect(platform.gameplayStarts).toBe(1);
+    expect(platform.gameplayStarts).toBe(2);
   });
 
   it('skips the platform call when rewarded ads are unsupported', async () => {
@@ -54,6 +57,7 @@ describe('AdManager rewarded', () => {
 
     expect(await ads.showRewarded('offline_double')).toBe(false);
     expect(platform.rewardedCalls).toEqual([]);
+    expect(platform.gameplayStarts).toBe(1);
   });
 });
 
@@ -73,6 +77,6 @@ describe('AdManager interstitial', () => {
     expect(await ads.showInterstitial('zone_unlocked')).toBe(true);
     expect(platform.interstitialCalls).toEqual(['zone_unlocked']);
     expect(platform.gameplayStops).toBe(1);
-    expect(platform.gameplayStarts).toBe(1);
+    expect(platform.gameplayStarts).toBe(2);
   });
 });

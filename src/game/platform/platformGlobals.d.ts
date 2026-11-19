@@ -37,6 +37,11 @@ interface YandexStorageLike {
 }
 
 interface YandexSDKLike {
+  environment?: {
+    i18n?: {
+      lang?: string;
+    };
+  };
   features?: {
     LoadingAPI?: { ready(): void };
     GameplayAPI?: { start(): void; stop(): void };

@@ -7,6 +7,13 @@ import type {
 const SDK_TIMEOUT_MS = 12_000;
 const AD_TIMEOUT_MS = 90_000;
 
+export function resolveYandexLanguage(
+  sdkLanguage: string | undefined,
+  browserLanguage: string | undefined,
+): string {
+  return sdkLanguage || browserLanguage || 'en';
+}
+
 function delay(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
@@ -30,13 +37,15 @@ export class YandexAdapter implements PlatformAdapter {
     if (!factory) throw new Error('YaGames SDK is not available');
 
     this.ysdk = await factory.init();
-    this.language =
-      typeof navigator !== 'undefined' ? navigator.language : 'en';
+    this.language = resolveYandexLanguage(
+      this.ysdk.environment?.i18n?.lang,
+      typeof navigator !== 'undefined' ? navigator.language : undefined,
+    );
 
     try {
       this.storage = (await this.ysdk.getStorage?.()) ?? null;
     } catch (error) {
-      console.warn('[YandexAdapter] safe storage unavailable, using localStorage', error);
+      console.warn('[YandexAdapter] safe storage unavailable', error);
     }
 
     this.bindVisibility();
@@ -146,29 +155,30 @@ export class YandexAdapter implements PlatformAdapter {
   }
 
   async saveData(key: string, value: unknown): Promise<void> {
-    const serialized = JSON.stringify(value);
-    if (this.storage) {
-      this.storage.setItem(key, serialized);
-      return;
-    }
-    if (typeof localStorage !== 'undefined') {
-      localStorage.setItem(key, serialized);
-    }
+    const storage = await this.ensureStorage();
+    storage.setItem(key, JSON.stringify(value));
   }
 
   async loadData<T>(key: string, fallback: T): Promise<T> {
+    const storage = await this.ensureStorage();
+    const raw = storage.getItem(key);
+    if (raw === null) return fallback;
     try {
-      const raw = this.storage
-        ? this.storage.getItem(key)
-        : typeof localStorage !== 'undefined'
-          ? localStorage.getItem(key)
-          : null;
-      if (raw === null) return fallback;
       return JSON.parse(raw) as T;
     } catch (error) {
-      console.warn('[YandexAdapter] load failed', error);
+      console.warn('[YandexAdapter] corrupted storage value', error);
       return fallback;
     }
+  }
+
+  private async ensureStorage(): Promise<YandexStorageLike> {
+    if (this.storage) return this.storage;
+    const storage = await this.ysdk?.getStorage?.();
+    if (!storage) {
+      throw new Error('Yandex safe storage is unavailable');
+    }
+    this.storage = storage;
+    return storage;
   }
 
   isRewardedSupported(): boolean {

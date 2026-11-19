@@ -65,6 +65,7 @@ export class UIScene extends Phaser.Scene {
   private shopPage = 0;
   private resetArmed = false;
   private adBusy = false;
+  private modalReasonActive = false;
   private toast: Phaser.GameObjects.Container | null = null;
   private readonly unsubscribers: Array<() => void> = [];
 
@@ -492,6 +493,7 @@ export class UIScene extends Phaser.Scene {
 
   private openModal(kind: ModalKind, objectId?: string): void {
     this.modal?.destroy();
+    this.pauseForModal();
     this.modalKind = kind;
     this.selectedObjectId = objectId ?? null;
     this.resetArmed = false;
@@ -537,6 +539,7 @@ export class UIScene extends Phaser.Scene {
         this.modal = null;
         this.modalKind = null;
         this.selectedObjectId = null;
+        this.resumeFromModal();
       },
     });
     this.renderModal();
@@ -547,6 +550,25 @@ export class UIScene extends Phaser.Scene {
     this.modal = null;
     this.modalKind = null;
     this.selectedObjectId = null;
+    this.resumeFromModal();
+  }
+
+  private pauseForModal(): void {
+    if (this.modalReasonActive) return;
+    this.modalReasonActive = true;
+    this.ctx.lifecycle.pause('modal');
+    if (this.scene.isActive('FarmScene')) {
+      this.scene.pause('FarmScene');
+    }
+  }
+
+  private resumeFromModal(): void {
+    if (!this.modalReasonActive) return;
+    this.modalReasonActive = false;
+    this.ctx.lifecycle.resume('modal');
+    if (this.scene.isPaused('FarmScene')) {
+      this.scene.resume('FarmScene');
+    }
   }
 
   private renderModal(): void {
@@ -651,7 +673,7 @@ export class UIScene extends Phaser.Scene {
       const affordable = this.ctx.economy.canAfford(order.requires);
       const complete = new Button(this, 274, 0, {
         width: 140,
-        height: 52,
+        height: 56,
         label: loc.t('orders.complete'),
         fontSize: 17,
         fill: affordable ? COLORS.green : COLORS.inkSoft,
@@ -802,7 +824,7 @@ export class UIScene extends Phaser.Scene {
       const card = this.createShopCard(
         item,
         -330 + column * 330,
-        -130 + row * 184,
+        -132 + row * 216,
       );
       this.modal?.body.add(card);
     });
@@ -815,9 +837,9 @@ export class UIScene extends Phaser.Scene {
           color: TEXT.inkSoft,
         })
         .setOrigin(0.5);
-      const prev = new Button(this, -560, 212, {
+      const prev = new Button(this, -460, 222, {
         width: 64,
-        height: 48,
+        height: 56,
         label: '‹',
         fontSize: 26,
         fill: COLORS.inkSoft,
@@ -827,9 +849,9 @@ export class UIScene extends Phaser.Scene {
           this.renderModal();
         },
       });
-      const next = new Button(this, 560, 212, {
+      const next = new Button(this, 460, 222, {
         width: 64,
-        height: 48,
+        height: 56,
         label: '›',
         fontSize: 26,
         fill: COLORS.accent,
@@ -852,13 +874,13 @@ export class UIScene extends Phaser.Scene {
     const card = this.add.container(x, y);
     const background = this.add.graphics();
     background.fillStyle(0xfff3da, 0.9);
-    background.fillRoundedRect(-150, -88, 300, 176, 22);
+    background.fillRoundedRect(-150, -105, 300, 210, 22);
     background.lineStyle(3, COLORS.panelStroke, 0.65);
-    background.strokeRoundedRect(-150, -88, 300, 176, 22);
+    background.strokeRoundedRect(-150, -105, 300, 210, 22);
 
-    const icon = this.add.image(0, -54, item.icon).setDisplaySize(50, 50);
+    const icon = this.add.image(0, -68, item.icon).setDisplaySize(48, 48);
     const name = this.add
-      .text(0, -14, item.name, {
+      .text(0, -28, item.name, {
         fontFamily: FONT_FAMILY,
         fontSize: item.name.length > 16 ? '15px' : '17px',
         fontStyle: 'bold',
@@ -870,7 +892,7 @@ export class UIScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     const costText = this.add
-      .text(0, item.description ? 40 : 28, formatCost(item.cost, loc), {
+      .text(0, item.description ? 34 : 30, formatCost(item.cost, loc), {
         fontFamily: FONT_FAMILY,
         fontSize: '14px',
         fontStyle: 'bold',
@@ -884,9 +906,9 @@ export class UIScene extends Phaser.Scene {
         : item.kind === 'helper'
           ? loc.t('common.hire')
           : loc.t('common.buy');
-    const button = new Button(this, 0, 64, {
+    const button = new Button(this, 0, 76, {
       width: 160,
-      height: 44,
+      height: 56,
       label: actionLabel,
       fontSize: 15,
       fill: item.canAct ? COLORS.green : COLORS.inkSoft,
@@ -898,7 +920,7 @@ export class UIScene extends Phaser.Scene {
     if (item.description) {
       card.add(
         this.add
-          .text(0, 12, item.description, {
+          .text(0, 2, item.description, {
             fontFamily: FONT_FAMILY,
             fontSize: '11px',
             color: TEXT.inkSoft,
@@ -1018,7 +1040,7 @@ export class UIScene extends Phaser.Scene {
       : `${loc.t('object.upgrade')} · ${formatCost(upgradeCost, loc)}`;
     const upgradeButton = new Button(this, 0, 96, {
       width: 300,
-      height: 50,
+      height: 56,
       label: upgradeLabel,
       fontSize: 16,
       fill: maxLevel ? COLORS.inkSoft : COLORS.accent,
@@ -1034,7 +1056,7 @@ export class UIScene extends Phaser.Scene {
     ) {
       const speed = new Button(this, 0, 158, {
         width: 300,
-        height: 46,
+        height: 56,
         label: `▶ ${loc.t('object.speed_ad')}`,
         fontSize: 15,
         fill: COLORS.inkSoft,
@@ -1043,7 +1065,7 @@ export class UIScene extends Phaser.Scene {
       this.modal.body.add(speed);
       this.modal.body.add(
         this.add
-          .text(0, 190, loc.t('object.speed_ad_desc'), {
+          .text(0, 198, loc.t('object.speed_ad_desc'), {
             fontFamily: FONT_FAMILY,
             fontSize: '12px',
             color: TEXT.inkSoft,
@@ -1055,7 +1077,7 @@ export class UIScene extends Phaser.Scene {
     if (config.kind === 'crop' && this.ctx.state.helpers.cat) {
       this.modal.body.add(
         this.add
-          .text(0, 206, loc.t('object.autocollect'), {
+          .text(0, 214, loc.t('object.autocollect'), {
             fontFamily: FONT_FAMILY,
             fontSize: '12px',
             fontStyle: 'bold',
@@ -1067,7 +1089,7 @@ export class UIScene extends Phaser.Scene {
     if (config.kind === 'animal' && this.ctx.state.helpers.dog) {
       this.modal.body.add(
         this.add
-          .text(0, 206, loc.t('object.dog_bonus'), {
+          .text(0, 214, loc.t('object.dog_bonus'), {
             fontFamily: FONT_FAMILY,
             fontSize: '12px',
             fontStyle: 'bold',
@@ -1087,7 +1109,7 @@ export class UIScene extends Phaser.Scene {
     if (status.kind === 'empty') {
       const button = new Button(this, 0, 30, {
         width: 260,
-        height: 50,
+        height: 56,
         label: loc.t('common.plant'),
         fontSize: 19,
         fill: COLORS.green,
@@ -1102,7 +1124,7 @@ export class UIScene extends Phaser.Scene {
     if (status.kind === 'ready') {
       const button = new Button(this, 0, 30, {
         width: 260,
-        height: 50,
+        height: 56,
         label: loc.t('common.collect'),
         fontSize: 19,
         fill: COLORS.green,
@@ -1158,7 +1180,7 @@ export class UIScene extends Phaser.Scene {
       this.modal.body.add(
         new Button(this, 0, 58, {
           width: 260,
-          height: 48,
+          height: 56,
           label: loc.t('common.collect'),
           fontSize: 18,
           fill: COLORS.green,
@@ -1172,7 +1194,7 @@ export class UIScene extends Phaser.Scene {
       this.modal.body.add(
         new Button(this, 0, 58, {
           width: 280,
-          height: 48,
+          height: 56,
           label: `${loc.t('common.start')} · ${inputText}`,
           fontSize: 15,
           fill: this.ctx.economy.canAfford(recipe.input)
@@ -1231,7 +1253,7 @@ export class UIScene extends Phaser.Scene {
 
     const music = new Button(this, 0, -132, {
       width: 380,
-      height: 52,
+      height: 56,
       label: `${loc.t('settings.music')}: ${state.settings.music ? loc.t('common.on') : loc.t('common.off')}`,
       icon: 'icon_music',
       fontSize: 18,
@@ -1243,7 +1265,7 @@ export class UIScene extends Phaser.Scene {
     });
     const sfx = new Button(this, 0, -64, {
       width: 380,
-      height: 52,
+      height: 56,
       label: `${loc.t('settings.sfx')}: ${state.settings.sfx ? loc.t('common.on') : loc.t('common.off')}`,
       icon: 'icon_sound',
       fontSize: 18,
@@ -1264,7 +1286,7 @@ export class UIScene extends Phaser.Scene {
       .setOrigin(0.5);
     const ru = new Button(this, -100, 42, {
       width: 180,
-      height: 46,
+      height: 56,
       label: loc.t('settings.lang_ru'),
       fontSize: 16,
       fill: loc.getLanguage() === 'ru' ? COLORS.green : COLORS.inkSoft,
@@ -1272,7 +1294,7 @@ export class UIScene extends Phaser.Scene {
     });
     const en = new Button(this, 100, 42, {
       width: 180,
-      height: 46,
+      height: 56,
       label: loc.t('settings.lang_en'),
       fontSize: 16,
       fill: loc.getLanguage() === 'en' ? COLORS.green : COLORS.inkSoft,
@@ -1301,7 +1323,7 @@ export class UIScene extends Phaser.Scene {
 
     const reset = new Button(this, 0, 178, {
       width: 320,
-      height: 48,
+      height: 56,
       label: this.resetArmed
         ? loc.t('settings.reset_confirm')
         : loc.t('settings.reset'),
@@ -1457,7 +1479,7 @@ export class UIScene extends Phaser.Scene {
 
     const claim = new Button(this, 0, 170, {
       width: 250,
-      height: 52,
+      height: 56,
       label: loc.t('offline.claim'),
       fontSize: 18,
       fill: COLORS.green,
@@ -1466,9 +1488,9 @@ export class UIScene extends Phaser.Scene {
     this.modal.body.add(claim);
 
     if (this.ctx.ads.isRewardedSupported() && report.gains.length > 0) {
-      const claimDouble = new Button(this, 0, 230, {
+      const claimDouble = new Button(this, 0, 232, {
         width: 330,
-        height: 52,
+        height: 56,
         label: `▶ ${loc.t('offline.claim_x2')}`,
         fontSize: 17,
         fill: COLORS.accent,
@@ -1492,7 +1514,15 @@ export class UIScene extends Phaser.Scene {
       }
     }
 
-    await this.ctx.claimOffline(multiplier);
+    try {
+      await this.ctx.claimOffline(multiplier);
+    } catch (error) {
+      console.warn('[UIScene] offline claim failed', error);
+      this.adBusy = false;
+      this.showToastKey('toast.offline_save_failed');
+      this.modalDirty = true;
+      return;
+    }
     this.adBusy = false;
     this.closeModal();
     this.showToastKey('toast.offline_claimed');

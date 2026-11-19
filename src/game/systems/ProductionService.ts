@@ -208,14 +208,53 @@ export class ProductionService {
   tickAutoCollect(now: number): AutoCollectResult[] {
     const results: AutoCollectResult[] = [];
     for (const crop of this.data.crops) {
-      if (!this.isAutoCollected(crop.id)) continue;
-      if (this.getStatus(crop.id, now).kind !== 'ready') continue;
-      const output = this.collectCrop(crop.id, now, true);
-      if (!output) continue;
-      this.plant(crop.id, now);
+      if (!this.isAutoCollected(crop.id) || !this.isObjectUnlocked(crop.id)) continue;
+      const state = this.getObjectState(crop.id);
+      const status = this.getStatus(crop.id, now);
+      if (status.kind === 'empty') {
+        this.plant(crop.id, now);
+        continue;
+      }
+      if (status.kind !== 'ready') continue;
+
+      const duration = this.durationMs(crop.id);
+      const readyAt = state.productionEndsAt ?? now;
+      const rawCycles = 1 + Math.max(0, Math.floor((now - readyAt) / duration));
+      const cycles = Math.min(60, rawCycles);
+      const level = this.getLevelConfig(crop.id);
+      const output: ResourceAmount[] = [
+        { id: crop.resourceId, amount: level.yield * cycles },
+      ];
+      this.economy.grant(output);
+      this.addCollectedStats(output);
+
+      const nextEnd =
+        rawCycles > 60 ? now + duration : readyAt + cycles * duration;
+      state.productionStartedAt = nextEnd - duration;
+      state.productionEndsAt = nextEnd;
+
+      this.bus.emit('crop:collected', { objectId: crop.id, output, auto: true });
+      this.bus.emit('object:changed', { objectId: crop.id });
       results.push({ objectId: crop.id, output });
     }
     return results;
+  }
+
+  rebaseOffline(now: number): void {
+    for (const animal of this.data.animals) {
+      if (!this.isObjectUnlocked(animal.id)) continue;
+      const state = this.getObjectState(animal.id);
+      state.productionStartedAt = now;
+      state.productionEndsAt = now + this.durationMs(animal.id);
+      this.bus.emit('object:changed', { objectId: animal.id });
+    }
+    for (const crop of this.data.crops) {
+      if (!this.isAutoCollected(crop.id) || !this.isObjectUnlocked(crop.id)) continue;
+      const state = this.getObjectState(crop.id);
+      state.productionStartedAt = now;
+      state.productionEndsAt = now + this.durationMs(crop.id);
+      this.bus.emit('object:changed', { objectId: crop.id });
+    }
   }
 
   getRecipeOutput(objectId: string, recipeId: string): ResourceAmount[] {

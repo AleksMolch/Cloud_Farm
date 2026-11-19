@@ -1,6 +1,7 @@
 import type { GameState } from '../types/GameState';
 import type { PlatformAdapter } from '../types/PlatformTypes';
 import type { EventBus } from './EventBus';
+import type { GameplayLifecycle } from './GameplayLifecycle';
 import type { TimeService } from './TimeService';
 
 export const MIN_INTERSTITIAL_SESSION_SECONDS = 180;
@@ -11,6 +12,7 @@ export class AdManager {
     private readonly state: GameState,
     private readonly bus: EventBus,
     private readonly time: TimeService,
+    private readonly lifecycle: GameplayLifecycle,
   ) {}
 
   isRewardedSupported(): boolean {
@@ -27,7 +29,7 @@ export class AdManager {
       return false;
     }
 
-    await this.stopGameplay();
+    this.lifecycle.pause('ad');
     this.bus.emit('ad:started', { placement, kind: 'rewarded' });
 
     let success = false;
@@ -37,7 +39,7 @@ export class AdManager {
       console.warn('[AdManager] rewarded ad failed', error);
     }
 
-    await this.startGameplay();
+    this.lifecycle.resume('ad');
     this.bus.emit('ad:finished', { placement, kind: 'rewarded', success });
 
     if (success) {
@@ -56,7 +58,7 @@ export class AdManager {
     const sessionSeconds = (this.time.now() - this.state.stats.sessionStartedAt) / 1000;
     if (sessionSeconds < MIN_INTERSTITIAL_SESSION_SECONDS) return false;
 
-    await this.stopGameplay();
+    this.lifecycle.pause('ad');
     this.bus.emit('ad:started', { placement, kind: 'interstitial' });
 
     let shown = false;
@@ -66,28 +68,12 @@ export class AdManager {
       console.warn('[AdManager] interstitial failed', error);
     }
 
-    await this.startGameplay();
+    this.lifecycle.resume('ad');
     this.bus.emit('ad:finished', {
       placement,
       kind: 'interstitial',
       success: shown,
     });
     return shown;
-  }
-
-  private async stopGameplay(): Promise<void> {
-    try {
-      await this.platform.gameplayStop();
-    } catch (error) {
-      console.warn('[AdManager] gameplayStop failed', error);
-    }
-  }
-
-  private async startGameplay(): Promise<void> {
-    try {
-      await this.platform.gameplayStart();
-    } catch (error) {
-      console.warn('[AdManager] gameplayStart failed', error);
-    }
   }
 }

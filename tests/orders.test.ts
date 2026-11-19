@@ -82,6 +82,26 @@ describe('OrderService', () => {
     );
   });
 
+  it('does not offer composite orders until all ingredients are producible', () => {
+    const { state, orders } = setup();
+    state.zones.mill.unlocked = true;
+    state.objects.mill.unlocked = true;
+    state.objects.bakery.unlocked = true;
+
+    let ids = orders.getEligibleTemplates().map((template) => template.id);
+    expect(ids).not.toContain('order_pie_1');
+    expect(ids).not.toContain('order_cream_1');
+
+    state.zones.yard.unlocked = true;
+    state.objects.chicken.unlocked = true;
+    state.objects.cow.unlocked = true;
+    state.objects.dairy.unlocked = true;
+
+    ids = orders.getEligibleTemplates().map((template) => template.id);
+    expect(ids).toContain('order_pie_1');
+    expect(ids).toContain('order_cream_1');
+  });
+
   it('returns an expired reason for an expired order', () => {
     const { state, orders } = setup();
     const id = state.orders[0].instanceId;

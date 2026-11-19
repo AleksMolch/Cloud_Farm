@@ -169,5 +169,6 @@
   "ui.crystal_short": "crystals",
   "ui.soon": "Coming soon…",
   "hud.storage": "Storage",
-  "storage.title": "Resource storage"
+  "storage.title": "Resource storage",
+  "toast.offline_save_failed": "Could not save the offline reward. Please try again."
 }

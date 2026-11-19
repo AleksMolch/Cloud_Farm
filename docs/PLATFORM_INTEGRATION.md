@@ -4,7 +4,7 @@
 
 Все платформенные вызовы изолированы в `src/game/platform`:
 
-- `PlatformAdapter.ts` — единый интерфейс;
+- `src/game/types/PlatformTypes.ts` — единый интерфейс `PlatformAdapter`;
 - `MockAdapter.ts` — локальная разработка, `localStorage`, имитация рекламы;
 - `PlaygamaAdapter.ts` — Playgama Bridge JS Core;
 - `YandexAdapter.ts` — прямой Yandex Games SDK;
@@ -17,11 +17,13 @@
 | Условие | Адаптер |
 |---|---|
 | `?platform=mock` | MockAdapter |
-| `?platform=yandex` или Yandex-домен | YandexAdapter, при ошибке — Mock |
-| `?platform=playgama` или загружен Bridge | PlaygamaAdapter; если Bridge сообщает `platform.id === 'mock'`, игра продолжает локально на MockAdapter |
+| `?platform=yandex` | YandexAdapter (явная прямая публикация), при ошибке — Mock |
+| `?platform=playgama` | PlaygamaAdapter |
+| Bridge загружен, параметр не задан | PlaygamaAdapter; если Bridge сообщает `platform.id === 'mock'`, игра продолжает локально на MockAdapter |
+| Bridge не загружен, Yandex-домен | YandexAdapter, при ошибке — Mock |
 | иначе | MockAdapter |
 
-При публикации через Playgama Bridge на Yandex используется Playgama-слой. Нативный YandexAdapter нужен только для прямой публикации, когда доступен `/sdk.js`.
+Bridge имеет приоритет над Yandex-доменом, чтобы публикация через Playgama не инициализировала второй SDK. Нативный YandexAdapter включается только явно (`?platform=yandex`) или когда Bridge отсутствует.
 
 Чтобы не оставлять загрузочный оверлей Bridge в локальном mock-режиме, `createPlatform` отправляет `game_ready` перед fallback на MockAdapter.
 
@@ -37,7 +39,7 @@
 | Аудио | `bridge.platform.isAudioEnabled` + `AUDIO_STATE_CHANGED` | браузерное состояние; платформенного audio API нет |
 | Pause | `EVENT_NAME.PAUSE_STATE_CHANGED` | `document.visibilitychange` |
 
-`ready()` вызывается после загрузки ассетов и создания первого интерактивного кадра (в `FarmScene`), а не на экране загрузки. `gameplayStart()` вызывается после ready, а также после закрытия меню/рекламы и возврата на вкладку. `gameplayStop()` — при паузе, открытии рекламы и уходе со вкладки.
+`ready()` вызывается после загрузки ассетов и создания первого интерактивного кадра (в `FarmScene`), а не на экране загрузки. `GameplayLifecycle` централизованно управляет gameplay: открытые модальные панели добавляют причину `modal` и ставят `FarmScene` на паузу, реклама — причину `ad`, платформенная пауза — `platform`. `gameplayStart()` вызывается только когда не осталось ни одной причины паузы; `gameplayStop()` — при появлении первой.
 
 ## Playgama Bridge
 
@@ -100,7 +102,9 @@ Interstitial:
 6. Fullscreen: `ysdk.adv.showFullscreenAdv`, `wasShown === false` не ломает игру.
 7. Rewarded: `ysdk.adv.showRewardedVideo`; награда только после `onRewarded`.
 8. Сохранения: `ysdk.getStorage()`, fallback на `localStorage` только при ошибке safe storage.
-9. Player/leaderboards не используются в MVP; имена таблиц не выдумываются.
+9. Язык берётся из `ysdk.environment.i18n.lang` с fallback на `navigator.language`.
+10. Player/leaderboards не используются в MVP; имена таблиц не выдумываются.
+11. При недоступности `ysdk.getStorage()` адаптер не подменяет хранилище на `localStorage`: сохранение/загрузка завершаются ошибкой, а boot не перезаписывает реальный прогресс.
 
 Если игра публикуется через Playgama Bridge на Yandex, прямой `/sdk.js` не подключается и YandexAdapter не используется.
 
@@ -129,7 +133,10 @@ Interstitial:
 - Неполные данные нормализуются: добавляются новые объекты/зоны/ресурсы.
 - Autosave: 20 секунд, debounce 250 мс после значимых действий, `pagehide` и `visibilitychange`.
 - Оффлайн: максимум 2 часа; не более 60 циклов на объект; учитываются животные и автособираемые грядки; с помощниками доход выше.
-- При claim оффлайн-награды состояние сохраняется сразу, чтобы не было дублей.
+- Невостребованный отчёт хранится в `GameState.pendingOffline`, поэтому autosave/reload не теряют награду.
+- Записи сохраняются последовательно через очередь `SaveService`; устаревший снимок не может перезаписать новый.
+- Claim оффлайн-награды сначала выдаёт ресурсы и rebase-ит производственные таймеры, затем ждёт успешную запись. При ошибке состояние откатывается, модалка остаётся открытой.
+- Ошибка чтения сохранения не трактуется как отсутствие сохранения: boot завершается безопасным экраном ошибки, чтобы не затереть прогресс.
 
 ## Пауза, звук, фокус
 

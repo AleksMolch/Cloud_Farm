@@ -68,6 +68,7 @@ export function createInitialState(data: GameData, now: number): GameState {
     helpers,
     orders: [],
     completedTutorialSteps: [],
+    pendingOffline: null,
     settings: {
       music: true,
       sfx: true,
@@ -192,6 +193,8 @@ export function normalizeState(raw: unknown, data: GameData, now: number): GameS
         )
     : [];
 
+  const pendingOffline = sanitizeOfflineReport(source.pendingOffline, knownResources);
+
   const knownSteps = new Set(data.tutorial.map((step) => step.id));
   const completedTutorialSteps = Array.isArray(source.completedTutorialSteps)
     ? source.completedTutorialSteps.filter(
@@ -233,9 +236,25 @@ export function normalizeState(raw: unknown, data: GameData, now: number): GameS
     helpers,
     orders,
     completedTutorialSteps,
+    pendingOffline,
     settings,
     stats,
     lastSaveTimestamp: numberOr(source.lastSaveTimestamp, now),
     nextOrderId,
+  };
+}
+
+function sanitizeOfflineReport(
+  raw: unknown,
+  knownResources: Set<string>,
+): GameState['pendingOffline'] {
+  if (!raw || typeof raw !== 'object') return null;
+  const source = raw as { elapsedSeconds?: unknown; creditedSeconds?: unknown; gains?: unknown };
+  const gains = sanitizeAmounts(source.gains, knownResources);
+  if (gains.length === 0) return null;
+  return {
+    elapsedSeconds: Math.max(0, Math.floor(numberOr(source.elapsedSeconds, 0))),
+    creditedSeconds: Math.max(0, Math.floor(numberOr(source.creditedSeconds, 0))),
+    gains,
   };
 }

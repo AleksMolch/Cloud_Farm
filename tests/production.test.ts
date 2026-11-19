@@ -52,6 +52,34 @@ describe('crop production', () => {
     expect(output).toEqual([{ id: 'wheat', amount: 3 }]);
   });
 
+  it('replants an empty cat plot after a manual harvest', () => {
+    const { state, production } = setup();
+    state.helpers.cat = true;
+
+    production.collect('plot_wheat', NOW);
+    expect(production.getStatus('plot_wheat', NOW).kind).toBe('empty');
+
+    production.tickAutoCollect(NOW + 500);
+
+    expect(state.objects.plot_wheat.productionEndsAt).toBe(NOW + 6500);
+    expect(state.resources.wheat).toBe(1);
+  });
+
+  it('catches up missed cat cycles after a long gap', () => {
+    const { state, production } = setup();
+    state.helpers.cat = true;
+    state.objects.plot_wheat.productionStartedAt = NOW - 66_000;
+    state.objects.plot_wheat.productionEndsAt = NOW - 60_000;
+
+    const collected = production.tickAutoCollect(NOW);
+
+    expect(collected).toEqual([
+      { objectId: 'plot_wheat', output: [{ id: 'wheat', amount: 11 }] },
+    ]);
+    expect(state.resources.wheat).toBe(11);
+    expect(state.objects.plot_wheat.productionEndsAt).toBe(NOW + 6000);
+  });
+
   it('lets the cloud cat auto-collect and replant wheat', () => {
     const { state, bus, production } = setup();
     state.helpers.cat = true;

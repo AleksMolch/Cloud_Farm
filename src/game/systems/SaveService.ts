@@ -15,6 +15,8 @@ export interface SaveTransport {
 }
 
 export class SaveService {
+  private writeChain: Promise<void> = Promise.resolve();
+
   constructor(
     private readonly transport: SaveTransport,
     private readonly data: GameData,
@@ -22,25 +24,36 @@ export class SaveService {
   ) {}
 
   async load(): Promise<GameState | null> {
+    const raw = await this.transport.loadData<unknown>(SAVE_KEY, null);
+    if (!raw || typeof raw !== 'object') return null;
+    const version = (raw as { version?: unknown }).version;
+    if (typeof version !== 'number' || version < 1 || version > SAVE_VERSION) {
+      return null;
+    }
     try {
-      const raw = await this.transport.loadData<unknown>(SAVE_KEY, null);
-      if (!raw || typeof raw !== 'object') return null;
-      const version = (raw as { version?: unknown }).version;
-      if (typeof version !== 'number' || version < 1 || version > SAVE_VERSION) {
-        return null;
-      }
       return normalizeState(raw, this.data, this.time.now());
     } catch (error) {
-      console.warn('Failed to load save data', error);
+      console.warn('Failed to normalize save data', error);
       return null;
     }
   }
 
-  async save(state: GameState): Promise<void> {
-    state.version = SAVE_VERSION;
-    state.lastSaveTimestamp = this.time.now();
+  save(state: GameState): Promise<void> {
     const snapshot = JSON.parse(JSON.stringify(state)) as GameState;
-    await this.transport.saveData(SAVE_KEY, snapshot);
+    snapshot.version = SAVE_VERSION;
+    snapshot.lastSaveTimestamp = this.time.now();
+
+    const write = async (): Promise<void> => {
+      await this.transport.saveData(SAVE_KEY, snapshot);
+      state.lastSaveTimestamp = Math.max(
+        state.lastSaveTimestamp,
+        snapshot.lastSaveTimestamp,
+      );
+    };
+
+    const result = this.writeChain.then(write, write);
+    this.writeChain = result.catch(() => undefined);
+    return result;
   }
 
   async reset(): Promise<void> {

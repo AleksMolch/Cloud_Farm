@@ -10,6 +10,7 @@ import { AdManager } from './AdManager';
 import { AudioService } from './AudioService';
 import { EconomyService } from './EconomyService';
 import { EventBus } from './EventBus';
+import { GameplayLifecycle } from './GameplayLifecycle';
 import { LocalizationService } from './LocalizationService';
 import { OfflineProgressService } from './OfflineProgressService';
 import { OrderService } from './OrderService';
@@ -47,6 +48,7 @@ export class GameContext {
   readonly saveService: SaveService;
   readonly saveScheduler: SaveScheduler;
   readonly ads: AdManager;
+  readonly lifecycle: GameplayLifecycle;
 
   pendingOffline: OfflineReport | null;
 
@@ -60,6 +62,7 @@ export class GameContext {
       options.localization ??
       new LocalizationService(this.platform.getLanguage(), this.state.settings.language);
     this.audio = options.audio ?? new AudioService(this.state, this.platform);
+    this.lifecycle = new GameplayLifecycle(this.platform);
 
     this.economy = new EconomyService(this.state, this.bus);
     this.production = new ProductionService(
@@ -96,10 +99,22 @@ export class GameContext {
       this.state,
       this.bus,
     );
-    this.ads = new AdManager(this.platform, this.state, this.bus, this.time);
+    this.ads = new AdManager(
+      this.platform,
+      this.state,
+      this.bus,
+      this.time,
+      this.lifecycle,
+    );
 
-    const report = this.offline.compute(this.state, this.time.now());
-    this.pendingOffline = report.gains.length > 0 ? report : null;
+    const savedPending = this.state.pendingOffline;
+    if (savedPending && savedPending.gains.length > 0) {
+      this.pendingOffline = savedPending;
+    } else {
+      const report = this.offline.compute(this.state, this.time.now());
+      this.pendingOffline = report.gains.length > 0 ? report : null;
+      this.state.pendingOffline = this.pendingOffline;
+    }
 
     this.wireEvents();
   }
@@ -121,14 +136,25 @@ export class GameContext {
   async claimOffline(multiplier: number): Promise<ResourceAmount[]> {
     if (!this.pendingOffline) return [];
     const report = this.pendingOffline;
+    const snapshot = JSON.parse(JSON.stringify(this.state)) as GameState;
     const claimed = this.offline.claim(this.economy, report, multiplier);
-    this.pendingOffline = null;
     this.state.stats.totalCollected += claimed.reduce(
       (sum, amount) => sum + amount.amount,
       0,
     );
+    this.pendingOffline = null;
+    this.state.pendingOffline = null;
+    this.production.rebaseOffline(this.time.now());
+
+    try {
+      await this.saveService.save(this.state);
+    } catch (error) {
+      Object.assign(this.state, snapshot);
+      this.pendingOffline = report;
+      throw error;
+    }
+
     this.bus.emit('offline:claimed', { multiplier, gains: claimed });
-    await this.saveScheduler.saveNow();
     return claimed;
   }
 
@@ -170,6 +196,11 @@ export class GameContext {
     this.bus.on('tutorial:step_completed', requestSave);
     this.bus.on('settings:changed', requestSave);
 
+    this.bus.on('crop:collected', requestSave);
+    this.bus.on('animal:collected', requestSave);
+    this.bus.on('building:collected', requestSave);
+    this.bus.on('building:started', requestSave);
+
     this.bus.on('crop:collected', () => this.audio.sfx('collect'));
     this.bus.on('animal:collected', () => this.audio.sfx('collect'));
     this.bus.on('building:collected', () => this.audio.sfx('collect'));
@@ -190,10 +221,10 @@ export class GameContext {
       this.bus.emit('game:paused', { paused });
       if (paused) {
         this.audio.pause();
-        void this.platform.gameplayStop();
+        this.lifecycle.pause('platform');
       } else {
         this.audio.resume();
-        void this.platform.gameplayStart();
+        this.lifecycle.resume('platform');
       }
     });
   }

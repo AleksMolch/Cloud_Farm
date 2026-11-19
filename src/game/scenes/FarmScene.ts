@@ -82,7 +82,7 @@ export class FarmScene extends Phaser.Scene {
     this.time.delayedCall(150, async () => {
       try {
         await this.ctx.platform.ready();
-        await this.ctx.platform.gameplayStart();
+        this.ctx.lifecycle.start();
       } catch (error) {
         console.warn('[FarmScene] platform lifecycle failed', error);
       }
@@ -241,17 +241,16 @@ export class FarmScene extends Phaser.Scene {
         .image(52, -1, 'icon_lock')
         .setDisplaySize(19, 19);
       container.add([background, label, lock]);
-      container.setSize(134, 30);
-      container.setInteractive(
-        new Phaser.Geom.Rectangle(0, 0, 134, 30),
-        Phaser.Geom.Rectangle.Contains,
-      );
-      container.input!.cursor = 'pointer';
-      container.on('pointerup', () => {
+      const hitArea = this.add
+        .rectangle(0, 0, 134, 56, 0xffffff, 0.001)
+        .setInteractive();
+      hitArea.input!.cursor = 'pointer';
+      hitArea.on('pointerup', () => {
         if (!this.ctx.state.zones[zone.id]?.unlocked) {
           this.ctx.bus.emit('ui:open-panel', { panel: 'shop' });
         }
       });
+      container.add(hitArea);
       this.zoneViews.set(zone.id, { container, label, lock, zone, background });
     }
     this.refreshZoneLabels();

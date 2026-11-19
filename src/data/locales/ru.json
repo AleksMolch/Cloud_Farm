@@ -169,5 +169,6 @@
   "ui.crystal_short": "крист.",
   "ui.soon": "Скоро…",
   "hud.storage": "Склад",
-  "storage.title": "Склад ресурсов"
+  "storage.title": "Склад ресурсов",
+  "toast.offline_save_failed": "Не удалось сохранить оффлайн-награду. Попробуй ещё раз."
 }

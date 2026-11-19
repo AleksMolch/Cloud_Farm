@@ -11,14 +11,51 @@ const NOW = 1_700_000_000_000;
 class MemoryTransport implements SaveTransport {
   data: unknown = null;
   saves = 0;
+  failLoads = 0;
+  failSaves = 0;
+
+  async loadData<T>(_key: string, fallback: T): Promise<T> {
+    if (this.failLoads > 0) {
+      this.failLoads -= 1;
+      throw new Error('load failed');
+    }
+    return (this.data ?? fallback) as T;
+  }
+
+  async saveData(_key: string, value: unknown): Promise<void> {
+    if (this.failSaves > 0) {
+      this.failSaves -= 1;
+      throw new Error('save failed');
+    }
+    this.saves += 1;
+    this.data = value;
+  }
+}
+
+class ControlledTransport implements SaveTransport {
+  data: unknown = null;
+  private readonly pending: Array<() => void> = [];
 
   async loadData<T>(_key: string, fallback: T): Promise<T> {
     return (this.data ?? fallback) as T;
   }
 
-  async saveData(_key: string, value: unknown): Promise<void> {
-    this.saves += 1;
-    this.data = value;
+  saveData(_key: string, value: unknown): Promise<void> {
+    return new Promise((resolve) => {
+      this.pending.push(() => {
+        this.data = value;
+        resolve();
+      });
+    });
+  }
+
+  releaseNext(): void {
+    const next = this.pending.shift();
+    next?.();
+  }
+
+  get pendingCount(): number {
+    return this.pending.length;
   }
 }
 
@@ -78,6 +115,49 @@ describe('SaveService', () => {
     expect(loaded?.objects.chicken).toBeDefined();
     expect(loaded?.objects.chicken.unlocked).toBe(false);
     expect(loaded?.settings.music).toBe(true);
+  });
+
+  it('propagates transport failures instead of treating them as no save', async () => {
+    const { transport, saveService } = setup();
+    transport.failLoads = 1;
+    await expect(saveService.load()).rejects.toThrow('load failed');
+  });
+
+  it('does not advance the save timestamp when a write fails', async () => {
+    const { state, transport, saveService } = setup();
+    state.lastSaveTimestamp = NOW - 5000;
+    transport.failSaves = 1;
+
+    await expect(saveService.save(state)).rejects.toThrow('save failed');
+    expect(state.lastSaveTimestamp).toBe(NOW - 5000);
+
+    await saveService.save(state);
+    expect(state.lastSaveTimestamp).toBe(NOW);
+  });
+
+  it('serializes saves so an older snapshot cannot overwrite a newer one', async () => {
+    const { state, transport } = setup();
+    const controlled = new ControlledTransport();
+    const saveService = new SaveService(controlled, loadGameData(), new TimeService(() => NOW));
+
+    state.resources.coin = 1;
+    const first = saveService.save(state);
+    state.resources.coin = 2;
+    const second = saveService.save(state);
+
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(controlled.pendingCount).toBe(1);
+    controlled.releaseNext();
+    await first;
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(controlled.pendingCount).toBe(1);
+    controlled.releaseNext();
+    await second;
+
+    expect((controlled.data as { resources: { coin: number } }).resources.coin).toBe(2);
+    void transport;
   });
 
   it('uses the configured save key', async () => {
