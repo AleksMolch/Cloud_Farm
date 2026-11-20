@@ -105,6 +105,20 @@ export interface TutorialStepConfig {
   reward?: ResourceAmount[];
 }
 
+export type StoryTrigger =
+  | { type: 'order_completed' }
+  | { type: 'object_upgraded'; objectId?: string }
+  | { type: 'object_unlocked'; objectId?: string }
+  | { type: 'animal_unlocked' }
+  | { type: 'zone_unlocked' };
+
+export interface StoryBeatConfig {
+  id: string;
+  trigger: StoryTrigger;
+  speakerKey: string;
+  textKey: string;
+}
+
 export interface GameData {
   crops: CropConfig[];
   animals: AnimalConfig[];
@@ -113,6 +127,7 @@ export interface GameData {
   helpers: HelperConfig[];
   orderTemplates: OrderTemplateConfig[];
   tutorial: TutorialStepConfig[];
+  story: StoryBeatConfig[];
   objects: Record<string, FarmObjectConfig>;
   objectList: FarmObjectConfig[];
   zoneById: Record<string, ZoneConfig>;

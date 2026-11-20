@@ -6,7 +6,9 @@ import type {
   SupportedLanguage,
 } from '../types/GameState';
 import type { PlatformAdapter } from '../types/PlatformTypes';
+import { createAnalyticsTransport } from '../analytics/createAnalyticsTransport';
 import { AdManager } from './AdManager';
+import { AnalyticsService } from './AnalyticsService';
 import { AudioService } from './AudioService';
 import { EconomyService } from './EconomyService';
 import { EventBus } from './EventBus';
@@ -16,6 +18,7 @@ import { OfflineProgressService } from './OfflineProgressService';
 import { OrderService } from './OrderService';
 import { ProductionService } from './ProductionService';
 import { SaveScheduler, SaveService } from './SaveService';
+import { StoryService } from './StoryService';
 import { TimeService } from './TimeService';
 import { TutorialService } from './TutorialService';
 import { UnlockService } from './UnlockService';
@@ -49,6 +52,8 @@ export class GameContext {
   readonly saveScheduler: SaveScheduler;
   readonly ads: AdManager;
   readonly lifecycle: GameplayLifecycle;
+  readonly analytics: AnalyticsService;
+  readonly story: StoryService;
 
   pendingOffline: OfflineReport | null;
 
@@ -106,6 +111,14 @@ export class GameContext {
       this.time,
       this.lifecycle,
     );
+    this.analytics = new AnalyticsService({
+      state: this.state,
+      data: this.data,
+      time: this.time,
+      bus: this.bus,
+      transport: createAnalyticsTransport(this.platform),
+    });
+    this.story = new StoryService(this.state, this.data, this.bus);
 
     const savedPending = this.state.pendingOffline;
     if (savedPending && savedPending.gains.length > 0) {
@@ -194,7 +207,15 @@ export class GameContext {
     this.bus.on('helper:unlocked', requestSave);
     this.bus.on('order:completed', requestSave);
     this.bus.on('tutorial:step_completed', requestSave);
+    this.bus.on('story:beat', requestSave);
+    this.bus.on('story:changed', requestSave);
     this.bus.on('settings:changed', requestSave);
+
+    this.bus.on('order:completed', () => {
+      if (this.analytics.shouldAskConsent()) {
+        this.bus.emit('analytics:consent-requested');
+      }
+    });
 
     this.bus.on('crop:collected', requestSave);
     this.bus.on('animal:collected', requestSave);

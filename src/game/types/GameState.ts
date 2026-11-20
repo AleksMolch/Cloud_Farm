@@ -17,7 +17,7 @@ export type ResourceId = (typeof RESOURCE_IDS)[number];
 
 export type SupportedLanguage = 'ru' | 'en';
 
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 export interface ResourceAmount {
   id: ResourceId;
@@ -46,6 +46,19 @@ export interface ActiveOrder {
   expiresAt: number;
 }
 
+export type AnalyticsConsent = 'unknown' | 'granted' | 'denied';
+
+export interface AnalyticsState {
+  installId: string;
+  consent: AnalyticsConsent;
+  firstEvents: string[];
+}
+
+export interface StoryState {
+  completedBeats: string[];
+  unreadBeats: string[];
+}
+
 export interface GameSettings {
   music: boolean;
   sfx: boolean;
@@ -69,6 +82,8 @@ export interface GameState {
   orders: ActiveOrder[];
   completedTutorialSteps: string[];
   pendingOffline: OfflineReport | null;
+  analytics: AnalyticsState;
+  story: StoryState;
   settings: GameSettings;
   stats: GameStats;
   lastSaveTimestamp: number;

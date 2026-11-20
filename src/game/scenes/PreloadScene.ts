@@ -42,6 +42,7 @@ const ASSETS: AssetSpec[] = [
   { key: 'icon_basket', width: 64, height: 64 },
   { key: 'icon_music', width: 64, height: 64 },
   { key: 'icon_sound', width: 64, height: 64 },
+  { key: 'icon_mail', width: 64, height: 64 },
   { key: 'resource_egg', width: 64, height: 64 },
   { key: 'resource_milk', width: 64, height: 64 },
   { key: 'resource_wool', width: 64, height: 64 },

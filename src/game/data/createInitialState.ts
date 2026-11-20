@@ -1,11 +1,14 @@
 import { RESOURCE_IDS, SAVE_VERSION } from '../types/GameState';
 import type {
+  AnalyticsConsent,
+  AnalyticsState,
   FarmObjectState,
   GameState,
   GameSettings,
   GameStats,
   ResourceAmount,
   ResourceId,
+  StoryState,
   SupportedLanguage,
 } from '../types/GameState';
 import type { FarmObjectConfig, GameData, ObjectBaseConfig } from '../types/ConfigTypes';
@@ -69,6 +72,15 @@ export function createInitialState(data: GameData, now: number): GameState {
     orders: [],
     completedTutorialSteps: [],
     pendingOffline: null,
+    analytics: {
+      installId: '',
+      consent: 'unknown',
+      firstEvents: [],
+    },
+    story: {
+      completedBeats: [],
+      unreadBeats: [],
+    },
     settings: {
       music: true,
       sfx: true,
@@ -202,6 +214,9 @@ export function normalizeState(raw: unknown, data: GameData, now: number): GameS
       )
     : [];
 
+  const analytics = sanitizeAnalytics(source.analytics);
+  const story = sanitizeStory(source.story, data.story.map((beat) => beat.id));
+
   const rawSettings = (source.settings ?? {}) as Partial<GameSettings>;
   const language = rawSettings.language;
   const settings = {
@@ -237,11 +252,58 @@ export function normalizeState(raw: unknown, data: GameData, now: number): GameS
     orders,
     completedTutorialSteps,
     pendingOffline,
+    analytics,
+    story,
     settings,
     stats,
     lastSaveTimestamp: numberOr(source.lastSaveTimestamp, now),
     nextOrderId,
   };
+}
+
+function sanitizeAnalytics(raw: unknown): AnalyticsState {
+  if (!raw || typeof raw !== 'object') {
+    return { installId: '', consent: 'unknown', firstEvents: [] };
+  }
+  const source = raw as Partial<AnalyticsState>;
+  const consent: AnalyticsConsent =
+    source.consent === 'granted' || source.consent === 'denied'
+      ? source.consent
+      : 'unknown';
+  const firstEvents = Array.isArray(source.firstEvents)
+    ? [
+        ...new Set(
+          source.firstEvents.filter(
+            (event): event is string => typeof event === 'string' && event.length > 0,
+          ),
+        ),
+      ]
+    : [];
+  return {
+    installId: typeof source.installId === 'string' ? source.installId : '',
+    consent,
+    firstEvents,
+  };
+}
+
+function sanitizeStory(raw: unknown, knownBeats: string[]): StoryState {
+  if (!raw || typeof raw !== 'object') {
+    return { completedBeats: [], unreadBeats: [] };
+  }
+  const source = raw as Partial<StoryState>;
+  const known = new Set(knownBeats);
+  const completedBeats = Array.isArray(source.completedBeats)
+    ? source.completedBeats.filter(
+        (id): id is string => typeof id === 'string' && known.has(id),
+      )
+    : [];
+  const completed = new Set(completedBeats);
+  const unreadBeats = Array.isArray(source.unreadBeats)
+    ? source.unreadBeats.filter(
+        (id): id is string => typeof id === 'string' && completed.has(id),
+      )
+    : [];
+  return { completedBeats, unreadBeats };
 }
 
 function sanitizeOfflineReport(

@@ -19,7 +19,7 @@ import {
   iconForResource,
 } from '../ui/theme';
 
-type ModalKind = 'orders' | 'shop' | 'object' | 'settings' | 'offline' | 'storage';
+type ModalKind = 'orders' | 'shop' | 'object' | 'settings' | 'offline' | 'storage' | 'mail';
 
 interface GoalInfo {
   text: string;
@@ -56,6 +56,9 @@ export class UIScene extends Phaser.Scene {
   private ordersButton!: Button;
   private shopButton!: Button;
   private settingsButton!: Button;
+  private storageButton!: Button;
+  private mailButton!: Button;
+  private questChip!: Phaser.GameObjects.Container;
 
   private modal: ModalPanel | null = null;
   private modalKind: ModalKind | null = null;
@@ -67,6 +70,8 @@ export class UIScene extends Phaser.Scene {
   private adBusy = false;
   private modalReasonActive = false;
   private toast: Phaser.GameObjects.Container | null = null;
+  private consentCard: Phaser.GameObjects.Container | null = null;
+  private consentRequested = false;
   private readonly unsubscribers: Array<() => void> = [];
 
   constructor() {
@@ -80,12 +85,23 @@ export class UIScene extends Phaser.Scene {
     this.bindEvents();
     this.updateHud();
     this.updateTutorialUi();
+    if (
+      this.ctx.analytics.shouldAskConsent() &&
+      this.ctx.state.stats.ordersCompleted > 0
+    ) {
+      this.consentRequested = true;
+    }
 
-    this.input.on('pointerdown', () => this.ctx.audio.unlock());
+    this.input.on('pointerdown', () => {
+      this.ctx.audio.unlock();
+      this.ctx.analytics.trackFirstTap();
+    });
 
     this.time.delayedCall(320, () => {
       if (this.ctx.pendingOffline) {
         this.openModal('offline');
+      } else {
+        this.maybeShowConsentCard();
       }
     });
 
@@ -130,8 +146,11 @@ export class UIScene extends Phaser.Scene {
     this.settingsButton = this.createHudButton(1170, 44, 76, null, 'icon_gear', COLORS.inkSoft, () =>
       this.openModal('settings'),
     );
-    this.createHudButton(600, 44, 140, 'hud.storage', 'icon_basket', 0x4b9fd0, () =>
+    this.storageButton = this.createHudButton(600, 44, 140, 'hud.storage', 'icon_basket', 0x4b9fd0, () =>
       this.openModal('storage'),
+    );
+    this.mailButton = this.createHudButton(1085, 44, 76, null, 'icon_mail', 0x7a9dc2, () =>
+      this.openModal('mail'),
     );
 
     const questBackground = this.add.graphics();
@@ -152,14 +171,15 @@ export class UIScene extends Phaser.Scene {
       .setOrigin(0, 0);
     this.questProgress = this.add.graphics();
 
-    const questChip = this.add.container(20, 84);
-    questChip.add([
+    this.questChip = this.add.container(20, 84);
+    this.questChip.add([
       questBackground,
       questIcon,
       this.questText,
       this.questProgress,
     ]);
-    this.hud.add(questChip);
+    this.hud.add(this.questChip);
+    this.updateHudVisibility();
   }
 
   private buildHint(): void {
@@ -274,6 +294,30 @@ export class UIScene extends Phaser.Scene {
       6,
       3,
     );
+    this.updateHudVisibility();
+    this.mailButton?.setHighlighted(
+      this.ctx.state.story.unreadBeats.length > 0,
+    );
+  }
+
+  private updateHudVisibility(): void {
+    if (!this.ordersButton) return;
+    const { state } = this.ctx;
+    const firstHarvest =
+      state.completedTutorialSteps.includes('collect_wheat') ||
+      state.stats.totalCollected > 0;
+    const firstOrder = state.stats.ordersCompleted > 0;
+    const hasResource = RESOURCE_IDS.some(
+      (id) => this.ctx.economy.get(id) > 0,
+    );
+    const tutorialDone = this.ctx.tutorial.getCurrentStep() === null;
+    const hasStory = state.story.completedBeats.length > 0;
+
+    this.ordersButton.setVisible(firstHarvest);
+    this.shopButton.setVisible(firstOrder);
+    this.storageButton?.setVisible(hasResource);
+    this.questChip?.setVisible(tutorialDone);
+    this.mailButton?.setVisible(hasStory);
   }
 
   private computeGoal(): GoalInfo {
@@ -358,10 +402,12 @@ export class UIScene extends Phaser.Scene {
 
     if (!step) {
       this.hintContainer.setVisible(false);
+      this.maybeShowConsentCard();
       return;
     }
     this.hintText.setText(this.ctx.localization.t(step.textKey));
     this.hintContainer.setVisible(true);
+    this.updateHudVisibility();
   }
 
   private bindEvents(): void {
@@ -412,7 +458,25 @@ export class UIScene extends Phaser.Scene {
     });
     this.subscribe('settings:changed', () => {
       this.rebuildHud();
+      this.consentCard?.destroy(true);
+      this.consentCard = null;
+      this.maybeShowConsentCard();
       this.modalDirty = true;
+    });
+    this.subscribe('story:changed', () => {
+      this.updateHud();
+      this.modalDirty = true;
+    });
+    this.subscribe('story:beat', () => {
+      this.showToastKey('story.new_mail');
+      this.updateHud();
+    });
+    this.subscribe('analytics:consent-requested', () => {
+      this.consentRequested = true;
+      this.maybeShowConsentCard();
+    });
+    this.subscribe('analytics:consent-changed', () => {
+      this.hideConsentCard();
     });
     this.subscribe('toast', ({ key, params }) => {
       this.showToastKey(key, params);
@@ -529,9 +593,15 @@ export class UIScene extends Phaser.Scene {
         height: 520,
         title: this.ctx.localization.t('storage.title'),
       },
+      mail: {
+        width: 760,
+        height: 560,
+        title: this.ctx.localization.t('story.mail_title'),
+      },
     };
     const size = sizes[kind];
     if (kind === 'shop') this.shopPage = 0;
+    if (kind === 'mail') this.ctx.story.markMailRead();
     this.modal = new ModalPanel(this, size.width, size.height, size.title, {
       closable: kind !== 'offline',
       closeOnOverlay: kind !== 'offline',
@@ -569,6 +639,7 @@ export class UIScene extends Phaser.Scene {
     if (this.scene.isPaused('FarmScene')) {
       this.scene.resume('FarmScene');
     }
+    this.maybeShowConsentCard();
   }
 
   private renderModal(): void {
@@ -580,6 +651,7 @@ export class UIScene extends Phaser.Scene {
       settings: this.ctx.localization.t('settings.title'),
       offline: this.ctx.localization.t('offline.title'),
       storage: this.ctx.localization.t('storage.title'),
+      mail: this.ctx.localization.t('story.mail_title'),
     };
     if (this.modalKind !== 'object') {
       this.modal.setTitle(titles[this.modalKind]);
@@ -603,6 +675,9 @@ export class UIScene extends Phaser.Scene {
         break;
       case 'storage':
         this.renderStorage();
+        break;
+      case 'mail':
+        this.renderMail();
         break;
     }
   }
@@ -1251,7 +1326,8 @@ export class UIScene extends Phaser.Scene {
     const loc = this.ctx.localization;
     const state = this.ctx.state;
 
-    const music = new Button(this, 0, -132, {
+    const hasAnalytics = this.ctx.analytics.requiresConsent();
+    const music = new Button(this, 0, hasAnalytics ? -158 : -132, {
       width: 380,
       height: 56,
       label: `${loc.t('settings.music')}: ${state.settings.music ? loc.t('common.on') : loc.t('common.off')}`,
@@ -1263,7 +1339,7 @@ export class UIScene extends Phaser.Scene {
         this.modalDirty = true;
       },
     });
-    const sfx = new Button(this, 0, -64, {
+    const sfx = new Button(this, 0, hasAnalytics ? -96 : -64, {
       width: 380,
       height: 56,
       label: `${loc.t('settings.sfx')}: ${state.settings.sfx ? loc.t('common.on') : loc.t('common.off')}`,
@@ -1277,14 +1353,14 @@ export class UIScene extends Phaser.Scene {
     });
 
     const languageLabel = this.add
-      .text(0, 0, loc.t('settings.language'), {
+      .text(0, hasAnalytics ? 22 : 0, loc.t('settings.language'), {
         fontFamily: FONT_FAMILY,
         fontSize: '18px',
         fontStyle: 'bold',
         color: TEXT.ink,
       })
       .setOrigin(0.5);
-    const ru = new Button(this, -100, 42, {
+    const ru = new Button(this, -100, hasAnalytics ? 64 : 42, {
       width: 180,
       height: 56,
       label: loc.t('settings.lang_ru'),
@@ -1292,7 +1368,7 @@ export class UIScene extends Phaser.Scene {
       fill: loc.getLanguage() === 'ru' ? COLORS.green : COLORS.inkSoft,
       onClick: () => this.ctx.setLanguage('ru'),
     });
-    const en = new Button(this, 100, 42, {
+    const en = new Button(this, 100, hasAnalytics ? 64 : 42, {
       width: 180,
       height: 56,
       label: loc.t('settings.lang_en'),
@@ -1304,7 +1380,7 @@ export class UIScene extends Phaser.Scene {
     const platform = this.add
       .text(
         0,
-        96,
+        hasAnalytics ? 116 : 96,
         loc.t('settings.platform', { name: this.ctx.platform.id }),
         {
           fontFamily: FONT_FAMILY,
@@ -1314,7 +1390,7 @@ export class UIScene extends Phaser.Scene {
       )
       .setOrigin(0.5);
     const version = this.add
-      .text(0, 120, loc.t('settings.version', { version: '1.0.0' }), {
+      .text(0, hasAnalytics ? 140 : 120, loc.t('settings.version', { version: '1.0.0' }), {
         fontFamily: FONT_FAMILY,
         fontSize: '13px',
         color: TEXT.inkSoft,
@@ -1346,7 +1422,7 @@ export class UIScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    this.modal.body.add([
+    const children: Phaser.GameObjects.GameObject[] = [
       music,
       sfx,
       languageLabel,
@@ -1356,7 +1432,34 @@ export class UIScene extends Phaser.Scene {
       version,
       reset,
       resetHint,
-    ]);
+    ];
+    if (hasAnalytics) {
+      const analytics = new Button(this, 0, -34, {
+        width: 380,
+        height: 56,
+        label: `${loc.t('settings.analytics')}: ${
+          this.ctx.analytics.getConsent() === 'granted'
+            ? loc.t('common.on')
+            : loc.t('common.off')
+        }`,
+        icon: 'icon_mail',
+        fontSize: 17,
+        fill:
+          this.ctx.analytics.getConsent() === 'granted'
+            ? COLORS.green
+            : COLORS.inkSoft,
+        onClick: () => {
+          const next =
+            this.ctx.analytics.getConsent() === 'granted'
+              ? 'denied'
+              : 'granted';
+          this.ctx.analytics.setConsent(next);
+          this.modalDirty = true;
+        },
+      });
+      children.splice(2, 0, analytics);
+    }
+    this.modal.body.add(children);
   }
 
   private renderStorage(): void {
@@ -1400,6 +1503,112 @@ export class UIScene extends Phaser.Scene {
         .setAlpha(amount > 0 ? 1 : 0.5);
       card.add([background, icon, name, value]);
       this.modal?.body.add(card);
+    });
+  }
+
+  private maybeShowConsentCard(): void {
+    if (!this.consentRequested || this.consentCard || this.modal) return;
+    if (this.ctx.tutorial.getCurrentStep() !== null) return;
+    if (!this.ctx.analytics.shouldAskConsent()) return;
+    this.showConsentCard();
+  }
+
+  private showConsentCard(): void {
+    const loc = this.ctx.localization;
+    const container = this.add
+      .container(GAME_WIDTH / 2, 520)
+      .setDepth(400);
+    const background = this.add.graphics();
+    background.fillStyle(0xfff8ec, 0.98);
+    background.fillRoundedRect(-410, -48, 820, 96, 24);
+    background.lineStyle(3, COLORS.accent, 0.85);
+    background.strokeRoundedRect(-410, -48, 820, 96, 24);
+    const icon = this.add.image(-382, 0, 'icon_mail').setDisplaySize(40, 40);
+    const text = this.add
+      .text(-350, -26, loc.t('analytics.consent_text'), {
+        fontFamily: FONT_FAMILY,
+        fontSize: '14px',
+        fontStyle: 'bold',
+        color: TEXT.ink,
+        wordWrap: { width: 420 },
+      })
+      .setOrigin(0, 0);
+    const allow = new Button(this, 150, 0, {
+      width: 180,
+      height: 56,
+      label: loc.t('analytics.allow'),
+      fontSize: 16,
+      fill: COLORS.green,
+      onClick: () => {
+        this.ctx.analytics.setConsent('granted');
+        this.consentRequested = false;
+        this.hideConsentCard();
+      },
+    });
+    const deny = new Button(this, 332, 0, {
+      width: 140,
+      height: 56,
+      label: loc.t('analytics.deny'),
+      fontSize: 15,
+      fill: COLORS.inkSoft,
+      onClick: () => {
+        this.ctx.analytics.setConsent('denied');
+        this.consentRequested = false;
+        this.hideConsentCard();
+      },
+    });
+    container.add([background, icon, text, allow, deny]);
+    this.consentCard = container;
+  }
+
+  private hideConsentCard(): void {
+    this.consentCard?.destroy(true);
+    this.consentCard = null;
+  }
+
+  private renderMail(): void {
+    if (!this.modal) return;
+    const loc = this.ctx.localization;
+    const beats = this.ctx.story.getCompletedBeats();
+    if (beats.length === 0) {
+      this.modal.body.add(
+        this.add
+          .text(0, -20, loc.t('story.empty'), {
+            fontFamily: FONT_FAMILY,
+            fontSize: '20px',
+            color: TEXT.inkSoft,
+          })
+          .setOrigin(0.5),
+      );
+      return;
+    }
+
+    beats.forEach((beat, index) => {
+      const y = -170 + index * 82;
+      const row = this.add.container(0, y);
+      const background = this.add.graphics();
+      background.fillStyle(0xfff3da, 0.85);
+      background.fillRoundedRect(-330, -34, 660, 70, 16);
+      background.lineStyle(2, COLORS.panelStroke, 0.5);
+      background.strokeRoundedRect(-330, -34, 660, 70, 16);
+      const speaker = this.add
+        .text(-306, -22, loc.t(beat.speakerKey), {
+          fontFamily: FONT_FAMILY,
+          fontSize: '12px',
+          fontStyle: 'bold',
+          color: TEXT.inkSoft,
+        })
+        .setOrigin(0, 0);
+      const text = this.add
+        .text(-306, -2, loc.t(beat.textKey), {
+          fontFamily: FONT_FAMILY,
+          fontSize: '15px',
+          color: TEXT.ink,
+          wordWrap: { width: 610 },
+        })
+        .setOrigin(0, 0);
+      row.add([background, speaker, text]);
+      this.modal?.body.add(row);
     });
   }
 

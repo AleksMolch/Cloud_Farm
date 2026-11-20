@@ -30,6 +30,52 @@ describe('initial game state', () => {
     expect(state.objects.chicken.unlocked).toBe(false);
   });
 
+  it('adds analytics and story defaults to old saves', () => {
+    const data = loadGameData();
+    const state = normalizeState({ version: 1, resources: {} }, data, NOW);
+
+    expect(state.version).toBe(2);
+    expect(state.analytics).toEqual({
+      installId: '',
+      consent: 'unknown',
+      firstEvents: [],
+    });
+    expect(state.story).toEqual({
+      completedBeats: [],
+      unreadBeats: [],
+    });
+  });
+
+  it('sanitizes analytics consent and story progress', () => {
+    const data = loadGameData();
+    const state = normalizeState(
+      {
+        version: 1,
+        analytics: {
+          installId: 'abc',
+          consent: 'granted',
+          firstEvents: ['first_tap', 'first_tap', 42],
+        },
+        story: {
+          completedBeats: ['first_order', 'removed_beat'],
+          unreadBeats: ['first_order', 'removed_beat'],
+        },
+      },
+      data,
+      NOW,
+    );
+
+    expect(state.analytics).toEqual({
+      installId: 'abc',
+      consent: 'granted',
+      firstEvents: ['first_tap'],
+    });
+    expect(state.story).toEqual({
+      completedBeats: ['first_order'],
+      unreadBeats: ['first_order'],
+    });
+  });
+
   it('normalizes a partial save without losing valid progress', () => {
     const data = loadGameData();
     const state = normalizeState(

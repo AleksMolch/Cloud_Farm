@@ -5,6 +5,7 @@ import zonesJson from '../../data/zones.json';
 import helpersJson from '../../data/helpers.json';
 import ordersJson from '../../data/orders.json';
 import tutorialJson from '../../data/tutorial.json';
+import storyJson from '../../data/story.json';
 import type { ResourceId } from '../types/GameState';
 import type {
   AnimalConfig,
@@ -14,6 +15,7 @@ import type {
   GameData,
   HelperConfig,
   OrderTemplateConfig,
+  StoryBeatConfig,
   TutorialStepConfig,
   ZoneConfig,
 } from '../types/ConfigTypes';
@@ -30,6 +32,7 @@ export function loadGameData(): GameData {
   const helpers = helpersJson as unknown as HelperConfig[];
   const orderTemplates = ordersJson as unknown as OrderTemplateConfig[];
   const tutorial = tutorialJson as unknown as TutorialStepConfig[];
+  const story = storyJson as unknown as StoryBeatConfig[];
 
   const objectList: FarmObjectConfig[] = [...crops, ...animals, ...buildings];
   const objects: Record<string, FarmObjectConfig> = {};
@@ -73,6 +76,7 @@ export function loadGameData(): GameData {
     helpers,
     orderTemplates,
     tutorial,
+    story,
     objects,
     objectList,
     zoneById,

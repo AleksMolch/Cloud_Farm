@@ -170,5 +170,18 @@
   "ui.soon": "Coming soon…",
   "hud.storage": "Storage",
   "storage.title": "Resource storage",
-  "toast.offline_save_failed": "Could not save the offline reward. Please try again."
+  "toast.offline_save_failed": "Could not save the offline reward. Please try again.",
+  "settings.analytics": "Analytics",
+  "analytics.consent_text": "Allow anonymous gameplay analytics so we can make the farm more comfortable?",
+  "analytics.allow": "Allow",
+  "analytics.deny": "Not now",
+  "story.mail_title": "Sky Mail",
+  "story.new_mail": "A new letter from the Keeper",
+  "story.empty": "No letters yet.",
+  "story.speaker.keeper": "Cloud Keeper",
+  "story.first_order": "«Your order reached the sky mail. The island is breathing again — keep going».",
+  "story.first_upgrade": "«The earth responds to care. I can feel the terrace waking up».",
+  "story.carrot_unlocked": "«The carrots have sprouted. You are closer to the old garden than you think».",
+  "story.first_zone": "«A new zone is open. A market once buzzed here — let us give it a voice again. Tomorrow I will tell you what happened to the island».",
+  "story.first_animal": "«The yard is warm again. The chicken is already looking for the best nest»."
 }

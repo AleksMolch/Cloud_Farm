@@ -75,7 +75,7 @@ describe('SaveService', () => {
 
     await saveService.save(state);
     expect(state.lastSaveTimestamp).toBe(NOW);
-    expect(transport.data).toMatchObject({ version: 1, resources: { coin: 123 } });
+    expect(transport.data).toMatchObject({ version: 2, resources: { coin: 123 } });
 
     const loaded = await saveService.load();
     expect(loaded?.resources.coin).toBe(123);

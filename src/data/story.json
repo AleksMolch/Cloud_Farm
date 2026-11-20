@@ -1,0 +1,32 @@
+[
+  {
+    "id": "first_order",
+    "trigger": { "type": "order_completed" },
+    "speakerKey": "story.speaker.keeper",
+    "textKey": "story.first_order"
+  },
+  {
+    "id": "first_upgrade",
+    "trigger": { "type": "object_upgraded" },
+    "speakerKey": "story.speaker.keeper",
+    "textKey": "story.first_upgrade"
+  },
+  {
+    "id": "carrot_unlocked",
+    "trigger": { "type": "object_unlocked", "objectId": "plot_carrot" },
+    "speakerKey": "story.speaker.keeper",
+    "textKey": "story.carrot_unlocked"
+  },
+  {
+    "id": "first_zone",
+    "trigger": { "type": "zone_unlocked" },
+    "speakerKey": "story.speaker.keeper",
+    "textKey": "story.first_zone"
+  },
+  {
+    "id": "first_animal",
+    "trigger": { "type": "animal_unlocked" },
+    "speakerKey": "story.speaker.keeper",
+    "textKey": "story.first_animal"
+  }
+]

@@ -125,6 +125,14 @@ Interstitial:
 - на время рекламы звук и gameplay останавливаются;
 - в MockAdapter реклама показывается тёмным DOM-оверлеем и завершается через 1 секунду.
 
+## Аналитика
+
+- Playgama: `bridge.analytics.send` для кастомных событий; lifecycle/ads/purchases/session Bridge записывает сам. Отдельный endpoint не нужен.
+- Yandex напрямую: встроенные метрики Консоли + Yandex Metrica для воронок и целей. Нужен `VITE_YANDEX_METRICA_COUNTER_ID`; snippet загружается после согласия.
+- Mock/local: `LocalAnalyticsTransport`, события только в консоль/локальное состояние.
+- Consent-карточка появляется после туториала; до согласия события буферизуются в памяти, после отказа очищаются.
+- Подробнее: [ANALYTICS.md](ANALYTICS.md).
+
 ## Сохранения
 
 - Ключ: `cloud_farm_save`.

@@ -43,6 +43,7 @@
 | `public/assets/images/icon_star.svg` | 64×64 | Цель/награда | HUD, подсказки | да |
 | `public/assets/images/icon_music.svg` | 64×64 | Музыка | настройки | да |
 | `public/assets/images/icon_sound.svg` | 64×64 | Звуки | настройки | да |
+| `public/assets/images/icon_mail.svg` | 64×64 | Небесная почта | HUD, consent | да |
 | `public/assets/images/resource_egg.svg` | 64×64 | Яйцо | склад, заказы, пузырь | да |
 | `public/assets/images/resource_milk.svg` | 64×64 | Молоко | склад, заказы, пузырь | да |
 | `public/assets/images/resource_wool.svg` | 64×64 | Шерсть | склад, заказы, пузырь | да |
@@ -51,7 +52,7 @@
 | `public/assets/images/resource_cream.svg` | 64×64 | Сливки | склад, заказы, пузырь | да |
 | `index.html` → `icon_coin.svg` | 64×64 | favicon | браузер | да |
 
-Итого: 32 SVG-файла. Все загружаются в `PreloadScene` с явными размерами, чтобы избежать зависимости от intrinsic size SVG.
+Итого: 33 SVG-файла. Все загружаются в `PreloadScene` с явными размерами, чтобы избежать зависимости от intrinsic size SVG.
 
 ## Аудио
 

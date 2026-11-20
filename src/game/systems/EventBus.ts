@@ -1,4 +1,4 @@
-import type { ResourceAmount } from '../types/GameState';
+import type { AnalyticsConsent, ResourceAmount } from '../types/GameState';
 
 export interface GameEventMap {
   'resources:changed': { changed: ResourceAmount[] };
@@ -38,9 +38,20 @@ export interface GameEventMap {
     success: boolean;
   };
   'offline:claimed': { multiplier: number; gains: ResourceAmount[] };
+  'analytics:consent-requested': void;
+  'analytics:consent-changed': { consent: AnalyticsConsent };
+  'story:beat': { beatId: string; speakerKey: string; textKey: string };
+  'story:changed': { completed: number; unread: number };
   'goal:changed': void;
   'ui:open-panel': {
-    panel: 'orders' | 'shop' | 'object' | 'settings' | 'offline' | 'storage';
+    panel:
+      | 'orders'
+      | 'shop'
+      | 'object'
+      | 'settings'
+      | 'offline'
+      | 'storage'
+      | 'mail';
     objectId?: string;
   };
 }

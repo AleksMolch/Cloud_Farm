@@ -38,7 +38,9 @@ export class FarmScene extends Phaser.Scene {
   private refreshAccumulator = 0;
   private tutorialRing!: Phaser.GameObjects.Graphics;
   private soonText!: Phaser.GameObjects.Text;
+  private island!: Phaser.GameObjects.Image;
   private highlightedStep: string | null = null;
+  private firstHarvestCelebrated = false;
 
   constructor() {
     super('FarmScene');
@@ -48,7 +50,7 @@ export class FarmScene extends Phaser.Scene {
     this.ctx = this.registry.get('ctx') as GameContext;
     this.createSky();
     this.createClouds();
-    this.add
+    this.island = this.add
       .image(GAME_WIDTH / 2, 438, 'island')
       .setOrigin(0.5)
       .setScale(0.97)
@@ -71,7 +73,10 @@ export class FarmScene extends Phaser.Scene {
       ease: 'Sine.easeInOut',
     });
 
-    this.input.on('pointerdown', () => this.ctx.audio.unlock());
+    this.input.on('pointerdown', () => {
+      this.ctx.audio.unlock();
+      this.ctx.analytics.trackFirstTap();
+    });
     this.bindEvents();
 
     this.scene.launch('UIScene');
@@ -327,21 +332,39 @@ export class FarmScene extends Phaser.Scene {
     this.subscribe('object:changed', ({ objectId }) => {
       this.views.get(objectId)?.refresh(this.ctx.time.now());
     });
-    this.subscribe('crop:collected', ({ objectId, output }) =>
-      this.floatOutput(objectId, output),
-    );
-    this.subscribe('animal:collected', ({ objectId, output }) =>
-      this.floatOutput(objectId, output),
-    );
-    this.subscribe('building:collected', ({ objectId, output }) =>
-      this.floatOutput(objectId, output),
-    );
+    this.subscribe('crop:collected', ({ objectId, output }) => {
+      this.floatOutput(objectId, output);
+      this.burstAtObject(objectId, true);
+      if (!this.firstHarvestCelebrated) {
+        this.firstHarvestCelebrated = true;
+        this.cameras.main.flash(160, 255, 247, 196, false);
+        this.tweens.add({
+          targets: this.island,
+          scale: 0.985,
+          duration: 260,
+          yoyo: true,
+          ease: 'Sine.easeInOut',
+        });
+      }
+    });
+    this.subscribe('animal:collected', ({ objectId, output }) => {
+      this.floatOutput(objectId, output);
+      this.burstAtObject(objectId, false);
+    });
+    this.subscribe('building:collected', ({ objectId, output }) => {
+      this.floatOutput(objectId, output);
+      this.burstAtObject(objectId, false);
+    });
+    this.subscribe('object:upgraded', ({ objectId }) => {
+      this.burstAtObject(objectId, true);
+    });
     this.subscribe('object:unlocked', () => {
       const now = this.ctx.time.now();
       for (const view of this.views.values()) view.refresh(now);
     });
     this.subscribe('zone:unlocked', () => {
       this.refreshZoneLabels();
+      this.cameras.main.flash(180, 255, 236, 170, false);
       const now = this.ctx.time.now();
       for (const view of this.views.values()) view.refresh(now);
     });
@@ -382,6 +405,32 @@ export class FarmScene extends Phaser.Scene {
     handler: (payload: GameEventMap[K]) => void,
   ): void {
     this.unsubscribers.push(this.ctx.bus.on(event, handler));
+  }
+
+  private burstAtObject(objectId: string, big: boolean): void {
+    const view = this.views.get(objectId);
+    if (!view) return;
+    const anchor = view.getFloatAnchor();
+    const count = big ? 10 : 6;
+    for (let index = 0; index < count; index += 1) {
+      const angle = (Math.PI * 2 * index) / count;
+      const distance = big ? 58 : 38;
+      const star = this.add
+        .image(anchor.x, anchor.y, 'icon_star')
+        .setDisplaySize(big ? 18 : 13, big ? 18 : 13)
+        .setDepth(920)
+        .setAlpha(0.95);
+      this.tweens.add({
+        targets: star,
+        x: anchor.x + Math.cos(angle) * distance,
+        y: anchor.y + Math.sin(angle) * distance,
+        alpha: 0,
+        scale: 0.2,
+        duration: big ? 620 : 420,
+        ease: 'Cubic.easeOut',
+        onComplete: () => star.destroy(),
+      });
+    }
   }
 
   private floatOutput(objectId: string, output: ResourceAmount[]): void {

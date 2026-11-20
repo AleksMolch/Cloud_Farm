@@ -12,6 +12,9 @@ interface PlaygamaBridgeLike {
     get(key: string | string[]): Promise<unknown>;
     set(key: string | string[], value: unknown): Promise<void>;
   };
+  analytics?: {
+    send(name: string, data?: Record<string, unknown>): void | Promise<void>;
+  };
   advertisement: {
     isRewardedSupported: boolean;
     isInterstitialSupported: boolean;
@@ -72,4 +75,5 @@ interface Window {
   YaGames?: {
     init(options?: Record<string, unknown>): Promise<YandexSDKLike>;
   };
+  ym?: (counterId: number, method: string, ...args: unknown[]) => void;
 }
